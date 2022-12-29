@@ -62,7 +62,7 @@ $ pip install -r requirements.txt
 #### Then fork the QueDateWeb
 
 ```sh
-$ https://github.com/QueGroup/QueDateWeb.git
+$ https://github.com/QueGroup/QueDate.git
 ```
 
 <br>
