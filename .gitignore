@@ -132,4 +132,4 @@ dmypy.json
 venv
 src/profiles/migrations/
 .env.dev
-.idea/
+.idea/*
