@@ -1,4 +1,4 @@
-# QueDateWeb
+# QueDate
 > An open source web dating platform using it you can make new acquaintances
 
 <!---
