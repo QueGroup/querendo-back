@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Another
+venv
+src/profiles/migrations/
+.env.dev
+.idea/
