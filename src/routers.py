@@ -2,6 +2,7 @@ from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from graphene_django.views import GraphQLView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -22,5 +23,6 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     path('', include('src.profiles.urls')),
+    path("graphql/", GraphQLView.as_view(graphiql=True)),
 
 ]

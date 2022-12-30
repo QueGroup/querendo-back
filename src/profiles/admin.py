@@ -3,6 +3,10 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 
 from .models import UserQue
+from .models import Interests
+from .models import City
+from .models import Gender
+from .models import UserAssumption
 
 
 
@@ -20,3 +24,7 @@ class UserQueAdmin(UserAdmin):
 
 
 admin.site.register(UserQue, UserQueAdmin)
+admin.site.register(Interests)
+admin.site.register(City)
+admin.site.register(Gender)
+admin.site.register(UserAssumption)
