@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserQue
+from .models import QueUser
 
 
 class GetUserQueSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class GetUserQueSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(write_only=True)
 
     class Meta:
-        model = UserQue
+        model = QueUser
         exclude = (
             "password",
             "last_login",
@@ -28,7 +28,7 @@ class GetUserQuePublicSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(write_only=True)
 
     class Meta:
-        model = UserQue
+        model = QueUser
         exclude = (
             "email",
             "phone",

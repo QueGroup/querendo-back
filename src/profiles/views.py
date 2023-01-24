@@ -2,14 +2,14 @@ from rest_framework.viewsets import ModelViewSet
 
 from .serializers import GetUserQueSerializer, GetUserQuePublicSerializer
 from rest_framework import permissions
-from .models import UserQue
+from .models import QueUser
 
 
 class UserQuePublicView(ModelViewSet):
     """
     Output public user profile
     """
-    queryset = UserQue.objects.all()
+    queryset = QueUser.objects.all()
     serializer_class = GetUserQuePublicSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -22,4 +22,4 @@ class UserQueView(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return UserQue.objects.filter(id=self.request.user.id)
+        return QueUser.objects.filter(id=self.request.user.id)
