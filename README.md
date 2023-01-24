@@ -1,5 +1,7 @@
-# QueDate
-> An open source web dating platform using it you can make new acquaintances
+<!--suppress HtmlDeprecatedAttribute -->
+<h1 align="center">Querendo</h1>
+
+> An open source web dating platform that you can use to make new acquaintances
 
 <!---
 <p align="center">
