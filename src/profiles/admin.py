@@ -21,4 +21,4 @@ class QueUserAdmin(UserAdmin):
 
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
-    list_display = ("user", "link")
+    list_display = ("user", "spotify", "instagram")
