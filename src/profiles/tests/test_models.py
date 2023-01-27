@@ -53,7 +53,7 @@ class TestQueUserModel(TestCase):
             phone='1234567890',
             gender='M',
             birthday='2000-01-01',
-            education='test_education',
+            educational_experience='test_education',
             show_me='F',
         )
         assert user.id is not None
@@ -61,7 +61,7 @@ class TestQueUserModel(TestCase):
         assert user.phone == '1234567890'
         assert user.gender == 'M'
         assert user.birthday == '2000-01-01'
-        assert user.education == 'test_education'
+        assert user.educational_experience == 'test_education'
         assert user.show_me == 'F'
 
 
@@ -84,8 +84,9 @@ class TestSocialLinkModel(TestCase):
         user = QueUser.objects.create(username='test_user')
         social_link = SocialLink.objects.create(
             user=user,
-            link='https://example.com',
+            spotify='https://spotify.com',
+            instagram='https://instagram.com'
         )
-        assert social_link.id is not None
         assert social_link.user == user
-        assert social_link.link == 'https://example.com'
+        assert social_link.spotify == 'https://spotify.com'
+        assert social_link.instagram == 'https://instagram.com'
