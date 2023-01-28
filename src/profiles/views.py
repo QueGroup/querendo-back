@@ -7,7 +7,7 @@ from .models import QueUser
 
 class UserQuePublicView(ModelViewSet):
     """
-    Output public user profile
+    Output public user account
     """
     queryset = QueUser.objects.all()
     serializer_class = GetUserQuePublicSerializer

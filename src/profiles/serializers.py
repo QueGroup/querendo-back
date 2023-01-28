@@ -18,6 +18,7 @@ class GetUserQueSerializer(serializers.ModelSerializer):
             "is_superuser",
             "groups",
             "user_permissions",
+            "phone",
         )
 
 
