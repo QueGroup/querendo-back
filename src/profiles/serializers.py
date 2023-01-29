@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import QueUser
+from .models import QueUser, Profile
 
 
 class GetUserQueSerializer(serializers.ModelSerializer):
@@ -41,3 +41,9 @@ class GetUserQuePublicSerializer(serializers.ModelSerializer):
             "groups",
             "user_permissions",
         )
+
+
+class GetUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'

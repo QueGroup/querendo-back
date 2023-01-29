@@ -133,3 +133,4 @@ venv
 src/profiles/migrations/
 .env.dev
 .idea/*
+media/

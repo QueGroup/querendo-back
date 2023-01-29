@@ -1,7 +1,10 @@
-from django.urls import path
-from . import views
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-    path('account/<int:pk>/', views.UserQueView.as_view({'get': 'retrieve', 'put': 'update'})),
-    path('<int:pk>/', views.UserQuePublicView.as_view({'get': 'retrieve'})),
-]
+from . import api
+
+router = DefaultRouter()
+
+router.register(r'account', api.UserQueAPI, basename="account")
+router.register(r'profile', api.ProfilePublicAPI, basename="profile")
+
+urlpatterns = router.urls

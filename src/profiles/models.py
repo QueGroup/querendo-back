@@ -14,20 +14,23 @@ class Interests(models.Model):
     https://pypi.org/project/django-multiselectfield/
     https://stackoverflow.com/questions/27440861/django-model-multiplechoice
     """
+
+    class Meta:
+        verbose_name = "Интерес"
+        verbose_name_plural = "Интересы"
+
     interests = models.CharField(max_length=64, null=True)
-
-
-class Photo(models.Model):
-    image = models.ImageField(upload_to=get_path_upload_avatar, blank=True, null=True,
-                              validators=[
-                                  FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']),
-                                  validate_size_image])
 
 
 class QueUser(AbstractUser):
     """
     User Model
     """
+
+    class Meta:
+        verbose_name = "Аккаунт пользователя"
+        verbose_name_plural = "Аккаунты пользователей"
+
     GENDERS = [
         ("M", "Male"),
         ("F", "Female"),
@@ -43,7 +46,10 @@ class QueUser(AbstractUser):
     educational_experience = models.CharField(max_length=32, null=True, verbose_name="Место обучения")
     show_me = models.CharField(max_length=1, choices=GENDERS, null=True)
     interests = models.ManyToManyField(Interests, limit_choices_to={'id__lte': 6}, blank=True)
-    avatar = models.ManyToManyField(Photo, limit_choices_to={'pk__lte': 6}, blank=True)
+    avatar = models.ImageField(upload_to=get_path_upload_avatar, blank=True, null=True,
+                               validators=[
+                                   FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']),
+                                   validate_size_image])
     birthday = models.DateField(null=True)
 
     @property
@@ -73,6 +79,11 @@ class Profile(models.Model):
     """
     User profile model
     """
+
+    class Meta:
+        verbose_name = "Профиль пользователя"
+        verbose_name_plural = "Профили пользователей"
+
     RELATIONSHIP_GOALS = [
         ('S', 'Short-term'),
         ('L', 'Long-term'),
@@ -105,10 +116,6 @@ class Profile(models.Model):
         ('N/A', 'Not Available')
     ]
 
-    # PLANS_FAMILY = [
-    #     ("A", "B")
-    # ]
-
     PERSONALITY_TYPE = [
 
         ('ISTJ', 'Introverted, Sensing, Thinking, Judging'),
@@ -137,7 +144,35 @@ class Profile(models.Model):
     relation_goals = models.CharField(max_length=3, null=True, choices=RELATIONSHIP_GOALS)
     zodiac_sign = models.CharField(max_length=16, null=True, choices=ZODIAC_SIGN)
     education = models.CharField(max_length=32, null=True, choices=EDUCATION_CATEGORIES)
-    # plans_for_family = models.CharField(max_length=32, null=True, choices=PLANS_FAMILY)
     personality_type = models.CharField(max_length=4, null=True, choices=PERSONALITY_TYPE)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
     company = models.CharField(max_length=64, null=True)
+
+
+class UserPreference(models.Model):
+    GENDERS = [
+        ("M", "Male"),
+        ("F", "Female"),
+    ]
+    user = models.OneToOneField(QueUser, related_name='user_preference', on_delete=models.CASCADE, db_index=True)
+
+    gender_pref = models.CharField(
+        verbose_name='Gender',
+        choices=GENDERS,
+        db_index=True,
+        max_length=1
+    )
+
+    age_pref_min = models.IntegerField(blank=True,
+                                       choices=[(x, str(x)) for x in range(18, 90)],
+                                       default=18)
+    age_pref_max = models.IntegerField(blank=True,
+                                       choices=[(x, str(x)) for x in range(18, 90)], null=True)
+    distance_pref_min = models.IntegerField(blank=True,
+                                            choices=[(x, str(x)) for x in range(1, 200)],
+                                            default=1)
+    distance_pref_max = models.IntegerField(blank=True,
+                                            choices=[(x, str(x)) for x in range(1, 200)], null=True)
+
+    def __str__(self):
+        return 'Preference of %s' % self.user
