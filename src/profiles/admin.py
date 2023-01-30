@@ -8,7 +8,7 @@ from .models import QueUser, SocialLink, Profile
 
 @admin.register(QueUser)
 class QueUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'phone', 'first_name', 'is_staff', 'get_image')
+    list_display = ('username', 'email', 'phone', 'first_name', 'is_staff', 'avatar')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'email')}),
@@ -20,9 +20,9 @@ class QueUserAdmin(UserAdmin):
          {'fields': ('phone', 'gender', 'educational_experience', 'show_me', 'interests', 'avatar', 'birthday')}),
     )
 
-    @staticmethod
-    def get_image(obj):
-        return mark_safe('<img src={img} width="50" height="60"'.format(img=obj.avatar.url))
+    # @staticmethod
+    # def get_image(obj):
+    #     return mark_safe('<img src={img} width="50" height="60"'.format(img=obj.avatar.url))
 
 
 @admin.register(SocialLink)
