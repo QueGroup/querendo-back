@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,7 +5,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions, status
 from .models import QueUser
 from .serializers import UserQueSerializer, UserQuePublicSerializer, TelegramUsersList
-import jwt
 
 
 class UserQuePublicAPI(ModelViewSet):

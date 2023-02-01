@@ -29,8 +29,7 @@ INSTALLED_APPS = [
     'djoser',
     'cities_light',
     'drf_yasg',
-    "corsheaders",
-    'django_filters',
+    'corsheaders',
     'src.profiles',
     'src.likes',
 ]
