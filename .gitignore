@@ -131,6 +131,7 @@ dmypy.json
 # Another
 venv
 src/profiles/migrations/
+src/likes/migrations/
 .env.dev
 .idea/*
 media/

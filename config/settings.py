@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-t_02+wqa(^(ktsevoc!fswi&%u+=&exu7+)+ewem^e99!nw+v!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -30,7 +30,9 @@ INSTALLED_APPS = [
     'cities_light',
     'drf_yasg',
     "corsheaders",
+    'django_filters',
     'src.profiles',
+    'src.likes',
 ]
 
 MIDDLEWARE = [

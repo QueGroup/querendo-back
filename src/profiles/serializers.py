@@ -1,8 +1,9 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import QueUser, Profile
+from .models import QueUser
 
 
-class GetUserQueSerializer(serializers.ModelSerializer):
+class UserQueSerializer(serializers.ModelSerializer):
     """
     Output info about our user
     """
@@ -22,7 +23,7 @@ class GetUserQueSerializer(serializers.ModelSerializer):
         )
 
 
-class GetUserQuePublicSerializer(serializers.ModelSerializer):
+class UserQuePublicSerializer(serializers.ModelSerializer):
     """
     Output public info about our user
     """
@@ -43,7 +44,16 @@ class GetUserQuePublicSerializer(serializers.ModelSerializer):
         )
 
 
-class GetUserProfileSerializer(serializers.ModelSerializer):
+class TelegramUsersList(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = '__all__'
+        model = QueUser
+        fields = ['telegram_id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+
+    def create(self, validated_data):
+        user = QueUser.objects.create(
+            username=validated_data['username'],
+            password=make_password(validated_data['password']),
+            telegram_id=validated_data['telegram_id']
+        )
+        return user

@@ -1,92 +1,63 @@
 import os
+from django.test import TestCase
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 import django
 
 django.setup()
+
+from src.profiles.models import Gender, InterestedInGender, RelationshipType, Interests, PersonalityType, Education, \
+    ZodiacSign, QueUser
+
 import pytest
-from django.test import TestCase
-from src.profiles.models import Interests, Photo, QueUser, Profile, SocialLink
-
-
-class TestInterestsModel(TestCase):
-    @pytest.mark.django_db
-    def test_interests_creation(self):
-        interest = Interests.objects.create(
-            interests='test_interest'
-        )
-        assert interest.id is not None
-        assert interest.interests == 'test_interest'
-
-    @pytest.mark.django_db
-    def test_queuser_interests_relationship(self):
-        interest = Interests.objects.create(interests='test_interest')
-        user = QueUser.objects.create(username='test_user')
-        user.interests.add(interest)
-        assert user.interests.count() == 1
-        assert user.interests.first() == interest
-
-
-class TestPhotoModel(TestCase):
-    @pytest.mark.django_db
-    def test_photo_creation(self):
-        photo = Photo.objects.create(
-            image='example.jpg'
-        )
-        assert photo.id is not None
-        assert photo.image.name == 'example.jpg'
-
-    @pytest.mark.django_db
-    def test_queuser_avatar_relationship(self):
-        photo = Photo.objects.create(image='example.jpg')
-        user = QueUser.objects.create(username='test_user')
-        user.avatar.add(photo)
-        assert user.avatar.count() == 1
-        assert user.avatar.first() == photo
-
-
-class TestQueUserModel(TestCase):
-    @pytest.mark.django_db
-    def test_queuser_creation(self):
-        user = QueUser.objects.create(
-            username='test_user',
-            phone='1234567890',
-            gender='M',
-            birthday='2000-01-01',
-            educational_experience='test_education',
-            show_me='F',
-        )
-        assert user.id is not None
-        assert user.username == 'test_user'
-        assert user.phone == '1234567890'
-        assert user.gender == 'M'
-        assert user.birthday == '2000-01-01'
-        assert user.educational_experience == 'test_education'
-        assert user.show_me == 'F'
 
 
 class TestProfileModel(TestCase):
     @pytest.mark.django_db
-    def test_profile_creation(self):
-        user = QueUser.objects.create(username='test_user')
-        profile = Profile.objects.create(
-            user=user,
-            bio='test_bio',
-        )
-        assert profile.id is not None
-        assert profile.user == user
-        assert profile.bio == 'test_bio'
+    def test_gender_model(self):
+        gender = Gender.objects.create(name='M')
+        assert str(gender) == 'M'
 
-
-class TestSocialLinkModel(TestCase):
     @pytest.mark.django_db
-    def test_sociallink_creation(self):
-        user = QueUser.objects.create(username='test_user')
-        social_link = SocialLink.objects.create(
-            user=user,
-            spotify='https://spotify.com',
-            instagram='https://instagram.com'
+    def test_interested_in_gender_model(self):
+        gender = Gender.objects.create(name='M')
+        interested_in_gender = InterestedInGender.objects.create(gender_id=gender)
+        assert str(interested_in_gender) == 'M'
+
+    @pytest.mark.django_db
+    def test_relationship_type_model(self):
+        relationship_type = RelationshipType.objects.create(relation_goals='S')
+        assert str(relationship_type) == 'S'
+
+    @pytest.mark.django_db
+    def test_interests_model(self):
+        interests = Interests.objects.create(interests='sports')
+        assert interests.interests == 'sports'
+
+    @pytest.mark.django_db
+    def test_personality_type_model(self):
+        personality_type = PersonalityType.objects.create(personality_type='ISTJ')
+        assert str(personality_type) == 'ISTJ'
+
+    @pytest.mark.django_db
+    def test_education_model(self):
+        education = Education.objects.create(name='HS')
+        assert str(education) == 'HS'
+
+    @pytest.mark.django_db
+    def test_zodiac_sign_model(self):
+        zodiac_sign = ZodiacSign.objects.create(zodiac_sign='leo')
+        assert str(zodiac_sign) == 'leo'
+
+    @pytest.mark.django_db
+    def test_que_user_model(self):
+        user = QueUser.objects.create(
+            username='test_users',
+            phone='1234567890',
+            birthday='2000-01-01',
         )
-        assert social_link.user == user
-        assert social_link.spotify == 'https://spotify.com'
-        assert social_link.instagram == 'https://instagram.com'
+        assert user.id is not None
+        assert user.telegram_id == 1
+        assert user.username == 'test_users'
+        assert user.phone == '1234567890'
+        assert user.birthday == '2000-01-01'
