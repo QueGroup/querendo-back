@@ -1,15 +1,16 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import UserQue
+from .models import QueUser
 
 
-class GetUserQueSerializer(serializers.ModelSerializer):
+class UserQueSerializer(serializers.ModelSerializer):
     """
     Output info about our user
     """
     avatar = serializers.ImageField(write_only=True)
 
     class Meta:
-        model = UserQue
+        model = QueUser
         exclude = (
             "password",
             "last_login",
@@ -18,17 +19,18 @@ class GetUserQueSerializer(serializers.ModelSerializer):
             "is_superuser",
             "groups",
             "user_permissions",
+            "phone",
         )
 
 
-class GetUserQuePublicSerializer(serializers.ModelSerializer):
+class UserQuePublicSerializer(serializers.ModelSerializer):
     """
     Output public info about our user
     """
     avatar = serializers.ImageField(write_only=True)
 
     class Meta:
-        model = UserQue
+        model = QueUser
         exclude = (
             "email",
             "phone",
@@ -40,3 +42,18 @@ class GetUserQuePublicSerializer(serializers.ModelSerializer):
             "groups",
             "user_permissions",
         )
+
+
+class TelegramUsersList(serializers.ModelSerializer):
+    class Meta:
+        model = QueUser
+        fields = ['telegram_id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+
+    def create(self, validated_data):
+        user = QueUser.objects.create(
+            username=validated_data['username'],
+            password=make_password(validated_data['password']),
+            telegram_id=validated_data['telegram_id']
+        )
+        return user
