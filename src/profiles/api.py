@@ -1,4 +1,6 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
+
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -34,6 +36,16 @@ class CreateUserInTelegram(ModelViewSet):
     queryset = QueUser.objects.all()
     serializer_class = TelegramUsersList
     permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        user = QueUser.objects.create(
+            username=request.data.get('username'),
+            password=make_password(request.data.get('password')),
+            telegram_id=request.data.get('telegram_id'),
+        )
+        if user:
+            return Response(status=status.HTTP_200_OK)
+        return Response({'error': 'Something error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class LoginUser(ModelViewSet):
