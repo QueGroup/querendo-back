@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
-from .models import QueUser
+from .models import QueUser, UserPhoto
 
 
 class UserQueSerializer(serializers.ModelSerializer):
@@ -44,16 +45,15 @@ class UserQuePublicSerializer(serializers.ModelSerializer):
         )
 
 
-class TelegramUsersList(serializers.ModelSerializer):
-    class Meta:
+class CreateUser(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
         model = QueUser
-        fields = ['telegram_id', 'username', 'password']
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+        fields = ['telegram_id', 'username', 'password', 'phone', 'birthday']
 
-    def create(self, validated_data):
-        user = QueUser.objects.create(
-            username=validated_data['username'],
-            password=make_password(validated_data['password']),
-            telegram_id=validated_data['telegram_id']
-        )
-        return user
+
+class ImageForm(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = UserPhoto
+        fields = ('image',)

@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
 from cities_light.models import City
+from django.utils.translation import gettext_lazy as _
 
 
 class TimeBasedModel(models.Model):
@@ -10,6 +12,33 @@ class TimeBasedModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class QueUser(AbstractUser, TimeBasedModel):
+    """
+    User Model
+    """
+    username_validator = UnicodeUsernameValidator()
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        blank=True,
+        null=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
+    telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
+
+    phone = models.CharField(max_length=16, null=True)
+    bio = models.CharField(max_length=512, null=True)
+    smart_photos = models.BooleanField(default=True,
+                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
+    birthday = models.DateField(null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
 
 
 class Gender(models.Model):
@@ -24,6 +53,7 @@ class Gender(models.Model):
 
 
 class InterestedInGender(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     gender_id = models.ForeignKey(Gender, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -31,6 +61,7 @@ class InterestedInGender(models.Model):
 
 
 class RelationshipType(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     RELATIONSHIP_GOALS = [
         ('S', 'Short-term'),
         ('L', 'Long-term'),
@@ -51,10 +82,12 @@ class Interests(models.Model):
     https://pypi.org/project/django-multiselectfield/
     https://stackoverflow.com/questions/27440861/django-model-multiplechoice
     """
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     interests = models.CharField(max_length=64, null=True)
 
 
 class PersonalityType(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     PERSONALITY_TYPE = [
         ('ISTJ', 'Introverted, Sensing, Thinking, Judging'),
         ('ISFJ', 'Introverted, Sensing, Feeling, Judging'),
@@ -80,6 +113,7 @@ class PersonalityType(models.Model):
 
 
 class Education(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     EDUCATION_CATEGORIES = [
         ('HS', 'High School'),
         ('AA', r'Associate\'s Degree'),
@@ -96,6 +130,7 @@ class Education(models.Model):
 
 
 class ZodiacSign(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     ZODIAC_SIGN = [
         ('aquarius', 'Aquarius'),
         ('pisces', 'Pisces'),
@@ -114,26 +149,6 @@ class ZodiacSign(models.Model):
 
     def __str__(self):
         return self.zodiac_sign
-
-
-class QueUser(AbstractUser, TimeBasedModel):
-    """
-    User Model
-    """
-    telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
-    gender_id = models.ForeignKey(Gender, on_delete=models.CASCADE, null=True)
-    interests_id = models.ForeignKey(Interests, on_delete=models.CASCADE, null=True)
-    interests_in_gender_id = models.ForeignKey(InterestedInGender, on_delete=models.CASCADE, null=True)
-    education_id = models.ForeignKey(Education, on_delete=models.CASCADE, null=True)
-    zodiac_sign_id = models.ForeignKey(ZodiacSign, on_delete=models.CASCADE, null=True, blank=True)
-    personality_type_id = models.ForeignKey(PersonalityType, on_delete=models.CASCADE, null=True, blank=True)
-
-    phone = models.CharField(max_length=16, null=True)
-    bio = models.CharField(max_length=512, null=True)
-    smart_photos = models.BooleanField(default=True,
-                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
-    birthday = models.DateField(null=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
 
 
 class InterestedInRelation(models.Model):

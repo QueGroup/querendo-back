@@ -17,7 +17,7 @@ class QueUserAdmin(UserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Info'),
          {'fields': (
-             'phone', 'gender_id', 'education_id', "interests_in_gender_id", "smart_photos", "birthday", "city",
+             'phone', "smart_photos", "birthday", "city",
              "bio")}),
     )
 
