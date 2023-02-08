@@ -1,9 +1,11 @@
 from datetime import timedelta
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
 from cities_light.models import City
+from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
 
 
@@ -25,8 +27,37 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
+
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    username_validator = UnicodeUsernameValidator()
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        blank=True,
+        null=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
     telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
+
+    phone = models.CharField(max_length=16, null=True)
+    bio = models.CharField(max_length=512, null=True)
+    smart_photos = models.BooleanField(default=True,
+                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
+    birthday = models.DateField(null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
+
+
+class Gender(models.Model):
+    GENDERS = [
+        ("M", "Male"),
+        ("F", "Female"),
+    ]
+    name = models.CharField(max_length=1, choices=GENDERS, default="M")
 
     phone = models.CharField(max_length=16, null=True)
     bio = models.CharField(max_length=512, null=True)
