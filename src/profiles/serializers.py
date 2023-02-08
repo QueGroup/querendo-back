@@ -51,6 +51,7 @@ class CreateUser(UserCreateSerializer):
         fields = ['telegram_id', 'username', 'password', 'phone', 'birthday']
 
 
+
 class ImageForm(serializers.ModelSerializer):
     image = serializers.ImageField()
 

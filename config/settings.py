@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+# import ../
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -189,3 +190,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
 ]
+
+# sending email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DOMAIN_NAME = 'http://127.0.0.1:8000'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = '2525'
+# EMAIL_USE_TLS = True
+
+

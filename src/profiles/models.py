@@ -1,9 +1,18 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
 from cities_light.models import City
 from django.utils.translation import gettext_lazy as _
+from django.utils.timezone import now
+
+
+GENDER_CHOICES = [
+        ("M", "Male"),
+        ("F", "Female"),
+    ]
 
 
 class TimeBasedModel(models.Model):
@@ -18,6 +27,8 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
+
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     username_validator = UnicodeUsernameValidator()
     username = models.CharField(
         _('username'),
@@ -48,16 +59,21 @@ class Gender(models.Model):
     ]
     name = models.CharField(max_length=1, choices=GENDERS, default="M")
 
-    def __str__(self):
-        return self.name
+    phone = models.CharField(max_length=16, null=True)
+    bio = models.CharField(max_length=512, null=True)
+    smart_photos = models.BooleanField(default=True,
+                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
+    birthday = models.DateField(null=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
+    age = models.IntegerField(null=True)
 
 
 class InterestedInGender(models.Model):
     user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-    gender_id = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
     def __str__(self):
-        return self.gender_id.name
+        return self.gender
 
 
 class RelationshipType(models.Model):

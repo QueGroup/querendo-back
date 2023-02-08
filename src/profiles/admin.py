@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
 
-from .models import QueUser, SocialLink, Gender, Education, InterestedInGender, UserPhoto
+from .models import QueUser, SocialLink, Education, InterestedInGender, UserPhoto
 
 
 @admin.register(QueUser)
@@ -27,14 +27,14 @@ class SocialLinkAdmin(admin.ModelAdmin):
     list_display = ("user_account_id", "spotify", "instagram")
 
 
-@admin.register(Gender)
-class GenderAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+# @admin.register(Gender)
+# class GenderAdmin(admin.ModelAdmin):
+#     list_display = ('gender',)
 
 
 @admin.register(InterestedInGender)
 class InterestedInGenderAdmin(admin.ModelAdmin):
-    list_display = ('gender_id',)
+    list_display = ('gender',)
 
 
 @admin.register(Education)
