@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
 from cities_light.models import City
+from django.utils.translation import gettext_lazy as _
 
 
 class TimeBasedModel(models.Model):
@@ -16,6 +18,19 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
+    username_validator = UnicodeUsernameValidator()
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        blank=True,
+        null=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
     telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
 
     phone = models.CharField(max_length=16, null=True)
