@@ -42,6 +42,11 @@ class CreateUserInTelegram(ModelViewSet):
             username=request.data.get('username'),
             password=make_password(request.data.get('password')),
             telegram_id=request.data.get('telegram_id'),
+            gender=request.data.get('gender'),
+            email=request.data.get('email'),
+            birthday=request.data.get('birthday'),
+            phone=request.data.get('phone')
+
         )
         if user:
             return Response(status=status.HTTP_200_OK)

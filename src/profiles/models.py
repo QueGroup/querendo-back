@@ -1,7 +1,16 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 from cities_light.models import City
+from django.utils.timezone import now
+
+
+GENDER_CHOICES = [
+        ("M", "Male"),
+        ("F", "Female"),
+    ]
 
 
 class TimeBasedModel(models.Model):
@@ -16,6 +25,7 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
 
     phone = models.CharField(max_length=16, null=True)
@@ -24,25 +34,15 @@ class QueUser(AbstractUser, TimeBasedModel):
                                        verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
     birthday = models.DateField(null=True)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
-
-
-class Gender(models.Model):
-    GENDERS = [
-        ("M", "Male"),
-        ("F", "Female"),
-    ]
-    name = models.CharField(max_length=1, choices=GENDERS, default="M")
-
-    def __str__(self):
-        return self.name
+    age = models.IntegerField(null=True)
 
 
 class InterestedInGender(models.Model):
     user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-    gender_id = models.ForeignKey(Gender, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
     def __str__(self):
-        return self.gender_id.name
+        return self.gender
 
 
 class RelationshipType(models.Model):
