@@ -44,4 +44,4 @@ class EducationAdmin(admin.ModelAdmin):
 
 @admin.register(UserPhoto)
 class UserPhotoAdmin(admin.ModelAdmin):
-    list_display = ('user_account_id', 'photo',)
+    list_display = ('user_account_id', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6')

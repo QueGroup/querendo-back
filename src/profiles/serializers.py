@@ -71,8 +71,21 @@ class TelegramUsersList(serializers.ModelSerializer):
 #глянуть асинхронную работу в django
 
 class ImageForm(serializers.ModelSerializer):
-    image = serializers.ImageField()
+    # image = serializers.ImageField()
 
     class Meta:
         model = UserPhoto
-        fields = ('image',)
+        fields = ['user_account_id', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6']
+
+    def create(self, validated_data):
+        user = QueUser.objects.create(
+            user_account_id=validated_data['user_account_id'],
+            photo1=validated_data['photo1'],
+            photo2=validated_data['photo2'],
+            photo3=validated_data['photo3'],
+            photo4=validated_data['photo4'],
+            photo5=validated_data['photo5'],
+            photo6=validated_data['photo6'],
+        )
+        return user
+
