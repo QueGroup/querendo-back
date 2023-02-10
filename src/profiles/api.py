@@ -7,6 +7,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions, status
 from .models import QueUser, UserPhoto
 from .serializers import UserQueSerializer, UserQuePublicSerializer, TelegramUsersList, ImageForm
+from .models import QueUser
+from .serializers import UserQueSerializer, UserQuePublicSerializer, CreateUser
 
 
 class UserQuePublicAPI(ModelViewSet):
