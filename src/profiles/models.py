@@ -1,18 +1,12 @@
-from datetime import timedelta
-
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
-from django.db import models
 from cities_light.models import City
-from django.utils.translation import gettext_lazy as _
-from django.utils.timezone import now
-
+from django.db import models
 
 GENDER_CHOICES = [
-        ("M", "Male"),
-        ("F", "Female"),
-    ]
+    ("M", "Male"),
+    ("F", "Female"),
+]
 
 
 class TimeBasedModel(models.Model):
@@ -27,23 +21,9 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
-
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    username_validator = UnicodeUsernameValidator()
-    username = models.CharField(
-        _('username'),
-        max_length=150,
-        unique=True,
-        blank=True,
-        null=True,
-        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
-        validators=[username_validator],
-        error_messages={
-            'unique': _("A user with that username already exists."),
-        },
-    )
-    telegram_id = models.IntegerField(unique=True, default=1, verbose_name="ID пользователя Телеграм")
-
+    interested_in_gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
+    telegram_id = models.IntegerField(unique=True, verbose_name="ID пользователя Телеграм", null=True)
     phone = models.CharField(max_length=16, null=True)
     bio = models.CharField(max_length=512, null=True)
     smart_photos = models.BooleanField(default=True,
@@ -51,29 +31,12 @@ class QueUser(AbstractUser, TimeBasedModel):
     birthday = models.DateField(null=True)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
 
-
-class Gender(models.Model):
-    GENDERS = [
-        ("M", "Male"),
-        ("F", "Female"),
-    ]
-    name = models.CharField(max_length=1, choices=GENDERS, default="M")
-
-    phone = models.CharField(max_length=16, null=True)
-    bio = models.CharField(max_length=512, null=True)
-    smart_photos = models.BooleanField(default=True,
-                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
-    birthday = models.DateField(null=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
-    age = models.IntegerField(null=True)
-
-
-class InterestedInGender(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-
-    def __str__(self):
-        return self.gender
+    photo1 = models.ImageField(upload_to='user_photos/', blank=False)
+    photo2 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo3 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo4 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo5 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo6 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
 
 
 class RelationshipType(models.Model):
@@ -207,13 +170,3 @@ class UserPreference(models.Model):
 
     def __str__(self):
         return 'Preference of %s' % self.user_account_id
-
-
-class UserPhoto(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-    photo1 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo2 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo3 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo4 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo5 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo6 = models.ImageField(upload_to='user_photos/', blank=True, null=True)

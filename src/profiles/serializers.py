@@ -1,7 +1,6 @@
-from django.contrib.auth.hashers import make_password
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
-from .models import QueUser, UserPhoto
+from .models import QueUser
 
 
 class UserQueSerializer(serializers.ModelSerializer):
@@ -48,25 +47,6 @@ class UserQuePublicSerializer(serializers.ModelSerializer):
 class CreateUser(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = QueUser
-        fields = ['telegram_id', 'username', 'password', 'phone', 'birthday']
-
-
-class ImageForm(serializers.ModelSerializer):
-    # image = serializers.ImageField()
-
-    class Meta:
-        model = UserPhoto
-        fields = ['user_account_id', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6']
-
-    def create(self, validated_data):
-        user = QueUser.objects.create(
-            user_account_id=validated_data['user_account_id'],
-            photo1=validated_data['photo1'],
-            photo2=validated_data['photo2'],
-            photo3=validated_data['photo3'],
-            photo4=validated_data['photo4'],
-            photo5=validated_data['photo5'],
-            photo6=validated_data['photo6'],
-        )
-        return user
-
+        fields = ['photo1', 'telegram_id', 'username', 'password',
+                  'phone', 'birthday', 'gender',
+                  ]
