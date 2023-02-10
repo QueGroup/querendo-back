@@ -172,19 +172,6 @@ class InterestedInRelation(models.Model):
     relationship_type_id = models.ForeignKey(RelationshipType, on_delete=models.CASCADE)
 
 
-# class UserPhoto(models.Model):
-#     user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-#     photo = models.ImageField(blank=True, null=True)
-class UserPhoto(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
-    photo1 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo2 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo3 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo4 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo5 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo6 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-
-
 class SocialLink(models.Model):
     """
     The model of links to social networks
@@ -221,3 +208,12 @@ class UserPreference(models.Model):
     def __str__(self):
         return 'Preference of %s' % self.user_account_id
 
+
+class UserPhoto(models.Model):
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
+    photo1 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo2 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo3 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo4 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo5 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    photo6 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
