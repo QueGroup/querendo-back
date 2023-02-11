@@ -17,14 +17,14 @@ class QueUserAdmin(UserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Info'),
          {'fields': (
-             'phone', "smart_photos", "birthday", "city",
-             "bio", "gender", "photo1")}),
+             'phone', 'smart_photos', 'birthday', 'city',
+             'bio', "gender", 'photo1')}),
     )
 
 
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
-    list_display = ("user_account_id", "spotify", "instagram")
+    list_display = ('user_account_id', 'spotify', 'instagram')
 
 
 @admin.register(Education)
