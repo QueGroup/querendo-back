@@ -1,7 +1,12 @@
 from django.contrib.auth.models import AbstractUser
+
 from django.core.validators import RegexValidator
+from birthday import BirthdayField
 from cities_light.models import City
 from django.db import models
+
+from config import settings
+from src.base.services import image_filename
 
 GENDER_CHOICES = [
     ("M", "Male"),
@@ -21,22 +26,24 @@ class QueUser(AbstractUser, TimeBasedModel):
     """
     User Model
     """
-    interested_in_gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    interested_in_gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
-    telegram_id = models.IntegerField(unique=True, verbose_name="ID пользователя Телеграм", null=True)
+    id = models.BigIntegerField(unique=True, verbose_name="ID пользователя Телеграм", primary_key=True)
     phone = models.CharField(max_length=16, null=True)
     bio = models.CharField(max_length=512, null=True)
     smart_photos = models.BooleanField(default=True,
                                        verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
-    birthday = models.DateField(null=True)
+    birthday = BirthdayField(null=True)
+    is_registered = models.BooleanField(default=False)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
-
-    photo1 = models.ImageField(upload_to='user_photos/', blank=False)
-    photo2 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo3 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo4 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo5 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
-    photo6 = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    language = models.CharField(max_length=10,
+                                default=settings.LANGUAGE_CODE, null=True)
+    photo1 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+    photo2 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+    photo3 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+    photo4 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+    photo5 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+    photo6 = models.ImageField(upload_to=image_filename, blank=True, null=True)
 
 
 class RelationshipType(models.Model):
