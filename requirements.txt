@@ -50,3 +50,4 @@ django-cities-light~=3.9.2
 django-filter==22.1
 django-birthday~=0.1.4
 drf-api-logger==1.1.12
+djangorestframework-api-key==2.3.0
