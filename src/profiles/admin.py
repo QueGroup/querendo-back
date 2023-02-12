@@ -1,8 +1,9 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
+from rest_framework_api_key.admin import APIKeyModelAdmin
 
-from .models import QueUser, SocialLink, Education
+from .models import QueUser, SocialLink, Education, UserAPIKeyModel
 
 
 @admin.register(QueUser)
@@ -30,3 +31,8 @@ class SocialLinkAdmin(admin.ModelAdmin):
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
+@admin.register(UserAPIKeyModel)
+class UserAPIKeyBModelAdmin(APIKeyModelAdmin):
+    pass
