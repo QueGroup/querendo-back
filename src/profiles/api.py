@@ -1,9 +1,10 @@
+from django.views.generic import CreateView
+
 from .serializers import UserQueSerializer, UserQuePublicSerializer, UserListSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from .models import QueUser
 from .tasks import check_age
-
 
 
 class UserQuePublicAPI(ModelViewSet):
@@ -36,6 +37,8 @@ class UserListAPI(ModelViewSet):
     queryset = QueUser.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
         return QueUser.objects.filter(id=self.request.user.id)
 
 
@@ -46,6 +49,5 @@ class TestCelery(CreateView):
 
     def form_valid(self, form):
         form.save()
-        # С помощью delay мы используем celery
         check_age.delay(form.instance.email)
         return super().form_valid(form)
