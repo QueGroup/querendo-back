@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 from birthday import BirthdayField
 from cities_light.models import City
 from django.db import models
+from rest_framework_api_key.models import AbstractAPIKey
 
 from config import settings
 from src.base.services import image_filename
@@ -44,6 +45,14 @@ class QueUser(AbstractUser, TimeBasedModel):
     photo4 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo5 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo6 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+
+
+class UserAPIKeyModel(AbstractAPIKey):
+    class Meta:
+        verbose_name = "User API Key"
+        verbose_name_plural = "User API Keys"
+
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE, related_name='api_keys')
 
 
 class RelationshipType(models.Model):
