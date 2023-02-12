@@ -1,7 +1,9 @@
-from models import QueUser
+from config.celery import app
+from .models import QueUser
 from datetime import datetime
 
 
+@app.task()
 def check_age():
     users = QueUser.objects.all()
     for user in users:
@@ -14,4 +16,3 @@ def check_age():
             new_age = now_date.year - birth_date.year
             user.age = new_age
             user.save()
-
