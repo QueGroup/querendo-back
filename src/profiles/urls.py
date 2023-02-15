@@ -3,6 +3,7 @@ from . import api
 from django.urls import path
 from .api import RegisterAPI, VerifyOTP
 app_name = 'profiles'
+
 urlpatterns = [
     path("register/", RegisterAPI.as_view()),
     path("verify/", VerifyOTP.as_view()),

@@ -4,6 +4,7 @@ from django.utils import translation
 
 
 class UserLanguageMiddleware(MiddlewareMixin):
+
     def process_response(self, request, response):
         user = getattr(request, 'user', None)
         if not user or not user.is_authenticated:

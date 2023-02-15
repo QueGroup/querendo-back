@@ -1,6 +1,7 @@
 from django.views.generic import CreateView
 
-from .serializers import UserQueSerializer, UserQuePublicSerializer, UserListSerializer, UserSerializer, VerifyAccountSerializer
+from .serializers import UserQueSerializer, UserQuePublicSerializer, UserListSerializer, UserSerializer
+from .serializers import VerifyAccountSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from .models import QueUser
@@ -107,7 +108,6 @@ class VerifyOTP(APIView):
 
                 user.is_verified = True
                 user.save()
-
 
                 return Response({
                     'status': 200,

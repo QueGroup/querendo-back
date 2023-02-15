@@ -1,9 +1,10 @@
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from .models import QueUser
-from rest_framework import permissions
 
 # TODO: https://hakibenita.com/django-rest-framework-slow
+
+
 class UserQueSerializer(serializers.ModelSerializer):
     """
     Output info about our user
@@ -67,9 +68,8 @@ class UserListSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    permission_classes = [permissions.AllowAny]
 
-    class Meta(UserCreateSerializer.Meta):
+    class Meta:
         model = QueUser
         fields = ['id', 'username', 'password', 'first_name', 'city', 'birthday', 'gender',
                   'interested_in_gender', 'phone', 'photo1', 'language', 'email']
@@ -78,5 +78,3 @@ class UserSerializer(serializers.ModelSerializer):
 class VerifyAccountSerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp = serializers.CharField()
-
-
