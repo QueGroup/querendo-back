@@ -8,6 +8,7 @@ from rest_framework_api_key.models import AbstractAPIKey
 
 from config import settings
 from src.base.services import image_filename
+from .manager import UserManager
 
 GENDER_CHOICES = [
     ("M", "Male"),
@@ -45,6 +46,14 @@ class QueUser(AbstractUser, TimeBasedModel):
     photo4 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo5 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo6 = models.ImageField(upload_to=image_filename, blank=True, null=True)
+
+    USERNAME_FIELD = 'email'
+    objects = UserManager()
+    REQUIRED_FIELDS = ["id", "username"]
+
+    email = models.EmailField(unique=True)
+    otp = models.CharField(max_length=128, blank=True)
+    is_verified = models.BooleanField(default=False)
 
 
 class UserAPIKeyModel(AbstractAPIKey):

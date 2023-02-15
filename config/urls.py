@@ -3,8 +3,10 @@ from django.contrib import admin
 from django.urls import path, include
 
 from config import settings
+# from src import profiles
 
 urlpatterns = [
+    path('profiles/', include('src.profiles.urls', namespace='profiles'), name='profiles'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
