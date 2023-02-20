@@ -24,22 +24,7 @@ class TimeBasedModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class QueUser(AbstractUser, TimeBasedModel):
-    """
-    User Model
-    """
-    interested_in_gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
-    id = models.BigIntegerField(unique=True, verbose_name="ID пользователя Телеграм", primary_key=True)
-    phone = models.CharField(max_length=16, null=True)
-    bio = models.CharField(max_length=512, null=True)
-    smart_photos = models.BooleanField(default=True,
-                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
-    birthday = BirthdayField(null=True)
-    is_registered = models.BooleanField(default=False)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
-    language = models.CharField(max_length=10,
-                                default=settings.LANGUAGE_CODE, null=True)
+class UserPhotos(models.Model):
     photo1 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo2 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo3 = models.ImageField(upload_to=image_filename, blank=True, null=True)
@@ -47,25 +32,8 @@ class QueUser(AbstractUser, TimeBasedModel):
     photo5 = models.ImageField(upload_to=image_filename, blank=True, null=True)
     photo6 = models.ImageField(upload_to=image_filename, blank=True, null=True)
 
-    USERNAME_FIELD = 'email'
-    objects = UserManager()
-    REQUIRED_FIELDS = ["id", "username"]
-
-    email = models.EmailField(unique=True)
-    otp = models.CharField(max_length=128, blank=True)
-    is_verified = models.BooleanField(default=False)
-
-
-class UserAPIKeyModel(AbstractAPIKey):
-    class Meta:
-        verbose_name = "User API Key"
-        verbose_name_plural = "User API Keys"
-
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE, related_name='api_keys')
-
 
 class RelationshipType(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     RELATIONSHIP_GOALS = [
         ('S', 'Short-term'),
         ('L', 'Long-term'),
@@ -86,12 +54,10 @@ class Interests(models.Model):
     https://pypi.org/project/django-multiselectfield/
     https://stackoverflow.com/questions/27440861/django-model-multiplechoice
     """
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     interests = models.CharField(max_length=64, null=True)
 
 
 class PersonalityType(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     PERSONALITY_TYPE = [
         ('ISTJ', 'Introverted, Sensing, Thinking, Judging'),
         ('ISFJ', 'Introverted, Sensing, Feeling, Judging'),
@@ -117,7 +83,6 @@ class PersonalityType(models.Model):
 
 
 class Education(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     EDUCATION_CATEGORIES = [
         ('HS', 'High School'),
         ('AA', r'Associate\'s Degree'),
@@ -127,14 +92,13 @@ class Education(models.Model):
         ('P', 'Professional Degree'),
         ('N/A', 'Not Available')
     ]
-    name = models.CharField(max_length=32, null=True, choices=EDUCATION_CATEGORIES, default="HS")
+    education = models.CharField(max_length=32, null=True, choices=EDUCATION_CATEGORIES, default="HS")
 
     def __str__(self):
-        return self.name
+        return self.education
 
 
 class ZodiacSign(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     ZODIAC_SIGN = [
         ('aquarius', 'Aquarius'),
         ('pisces', 'Pisces'),
@@ -156,7 +120,6 @@ class ZodiacSign(models.Model):
 
 
 class InterestedInRelation(models.Model):
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE)
     relationship_type_id = models.ForeignKey(RelationshipType, on_delete=models.CASCADE)
 
 
@@ -164,7 +127,6 @@ class SocialLink(models.Model):
     """
     The model of links to social networks
     """
-    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE, related_name="social_links")
     spotify = models.CharField(max_length=100, blank=True,
                                validators=[RegexValidator(
                                    regex='^https?://open.spotify.com/[a-zA-Z0-9]+$',
@@ -174,14 +136,8 @@ class SocialLink(models.Model):
                                      regex='^https?://(www\.)?instagram\.com/[a-zA-Z0-9._-]+$',
                                      message='Please enter a valid Instagram URL')])
 
-    def __str__(self):
-        return "{user}".format(user=self.user_account_id.username)
-
 
 class UserPreference(models.Model):
-    user_account_id = models.OneToOneField(QueUser, related_name='user_preference', on_delete=models.CASCADE,
-                                           db_index=True)
-
     age_pref_min = models.IntegerField(blank=True,
                                        choices=[(x, str(x)) for x in range(18, 90)],
                                        default=18)
@@ -193,5 +149,45 @@ class UserPreference(models.Model):
     distance_pref_max = models.IntegerField(blank=True,
                                             choices=[(x, str(x)) for x in range(1, 200)], null=True)
 
-    def __str__(self):
-        return 'Preference of %s' % self.user_account_id
+
+class QueUser(AbstractUser, TimeBasedModel):
+    """
+    User Model
+    """
+    interested_in_gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True)
+    id = models.BigIntegerField(unique=True, verbose_name="ID пользователя Телеграм", primary_key=True)
+    phone = models.CharField(max_length=16, null=True)
+    bio = models.CharField(max_length=512, null=True)
+    smart_photos = models.BooleanField(default=True,
+                                       verbose_name="Функция, которая выбирает лучшую фотографию из профиля")
+    birthday = BirthdayField(null=True)
+    is_registered = models.BooleanField(default=False)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
+    language = models.CharField(max_length=10,
+                                default=settings.LANGUAGE_CODE, null=True)
+    user_photo = models.OneToOneField(UserPhotos, on_delete=models.CASCADE, null=True)
+    user_preference = models.OneToOneField(UserPreference, on_delete=models.CASCADE, null=True)
+    social_links = models.OneToOneField(SocialLink, on_delete=models.CASCADE, null=True)
+    relation_type = models.OneToOneField(RelationshipType, on_delete=models.CASCADE, null=True)
+    zodiac_sign = models.OneToOneField(ZodiacSign, on_delete=models.CASCADE, null=True)
+    interested_in_relation = models.OneToOneField(InterestedInRelation, on_delete=models.CASCADE, null=True)
+    personality_type = models.OneToOneField(PersonalityType, on_delete=models.CASCADE, null=True)
+    education = models.OneToOneField(Education, on_delete=models.CASCADE, null=True)
+    interests = models.OneToOneField(Interests, on_delete=models.CASCADE, null=True)
+
+    USERNAME_FIELD = 'email'
+    objects = UserManager()
+    REQUIRED_FIELDS = ["id", "username"]
+
+    email = models.EmailField(unique=True)
+    otp = models.CharField(max_length=128, blank=True)
+    is_verified = models.BooleanField(default=False)
+
+
+class UserAPIKeyModel(AbstractAPIKey):
+    class Meta:
+        verbose_name = "User API Key"
+        verbose_name_plural = "User API Keys"
+
+    user_account_id = models.ForeignKey(QueUser, on_delete=models.CASCADE, related_name='api_keys')

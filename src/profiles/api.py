@@ -1,49 +1,33 @@
+from django.contrib.auth import authenticate, login
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import CreateView
+from rest_framework_api_key.permissions import HasAPIKey
 
-from .serializers import UserQueSerializer, UserQuePublicSerializer, UserListSerializer, UserSerializer
+from .serializers import UserQuePublicSerializer, UserListSerializer, UserSerializer, UserLoginSerializer
 from .serializers import VerifyAccountSerializer
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
+from rest_framework import permissions, status, viewsets
 from .models import QueUser
 from .tasks import check_age
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from .emails import send_otp_to_email
 
 
-class UserQuePublicAPI(ModelViewSet):
+class UserQuePublicAPI(viewsets.ModelViewSet):
     """
     Output public user account
     """
     serializer_class = UserQuePublicSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return QueUser.objects.filter(id=self.request.user.id)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly & HasAPIKey]
+    queryset = QueUser.objects.all()
 
 
-class UserQueAPI(ModelViewSet):
-    """
-    Output user info
-    """
-    serializer_class = UserQueSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        return QueUser.objects.filter(id=self.request.user.id)
-
-
-class UserListAPI(ModelViewSet):
+class UserListAPI(viewsets.ModelViewSet):
     """
     Output list of users
     """
-    queryset = QueUser.objects.all()
     serializer_class = UserListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        return QueUser.objects.filter(id=self.request.user.id)
+    permission_classes = [HasAPIKey]
+    queryset = QueUser.objects.all()
 
 
 class TestCelery(CreateView):
@@ -57,68 +41,114 @@ class TestCelery(CreateView):
         return super().form_valid(form)
 
 
-# email reg
-
-class RegisterAPI(APIView):
+class RegisterAPI(viewsets.ModelViewSet):
+    """
+    Registration by email
+    """
     permission_classes = [permissions.AllowAny]
+    serializer_class = UserSerializer
+    queryset = QueUser.objects.all()
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         try:
-            data = request.data
-            serializer = UserSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                send_otp_to_email(serializer.data['email'])
-                return Response({
-                    'status': 200,
-                    'message': "You has been registered, check email to finalize register",
-                    'data': serializer.data
-                })
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            send_otp_to_email(serializer.data['email'])
+
             return Response({
-                'status': 400,
-                'message': f"Smt went wrong",
+                'status': status.HTTP_200_OK,
+                'message': 'You have been registered, check your email to finalize registration',
                 'data': serializer.data
             })
         except Exception as error:
             print(error)
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Something went wrong'
+            })
 
-class VerifyOTP(APIView):
+
+class VerifyOTP(viewsets.ModelViewSet):
+    """
+    The class with which the user confirms his mail
+    """
     permission_classes = [permissions.AllowAny]
-    def post(self, request):
+    serializer_class = VerifyAccountSerializer
+    queryset = QueUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
         try:
-            data = request.data
-            serializer = VerifyAccountSerializer(data=data)
-            if serializer.is_valid():
-                email = serializer.data['email']
-                otp = serializer.data['otp']
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data['email']
+            otp = serializer.validated_data['otp']
 
-                user = QueUser.objects.filter(email=email).first()
-                if user.email == '':
-                    return Response({
-                        'status': 400,
-                        'message': f"Invalid email",
-                        'data': serializer.data
-                    })
-                if not user.otp == otp:
-                    return Response({
-                        'status': 400,
-                        'message': f"wrong otp",
-                        'data': serializer.data
-                    })
-
-                user.is_verified = True
-                user.save()
-
+            user = QueUser.objects.filter(email=email).first()
+            if not user:
                 return Response({
-                    'status': 200,
-                    'message': "Your account has been verified",
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Invalid email',
+                    'data': serializer.data
+                })
+            if not user.otp == otp:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Wrong otp',
                     'data': serializer.data
                 })
 
+            user.is_verified = True
+            user.save()
+
             return Response({
-                'status': 400,
-                'message': f"Smt went wrong",
+                'status': status.HTTP_200_OK,
+                'message': 'Your account has been verified',
                 'data': serializer.data
             })
         except Exception as error:
             print(error)
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Something went wrong'
+            })
+
+
+class LoginAPI(viewsets.ModelViewSet):
+    """
+    User login API
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserLoginSerializer
+    queryset = QueUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            if user.is_active:
+                # Login the user and return a success response
+                login(request, user)
+                return Response({
+                    'status': status.HTTP_200_OK,
+                    'message': 'Login successful',
+                    'data': {
+                        'user_id': user.id,
+                        'email': user.email,
+                    }
+                })
+            else:
+                # User is not active, return an error response
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'User account is not active',
+                })
+        else:
+            # Email and/or password are incorrect, return an error response
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Invalid email and/or password',
+            })
