@@ -13,7 +13,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
 
 # https://stackoverflow.com/questions/44651760/django-db-migrations-exceptions-inconsistentmigrationhistory
@@ -201,16 +200,15 @@ CORS_ALLOWED_ORIGINS = [
 # Sending email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get("EMAIL")
+EMAIL_HOST_USER = 'coopquegroup@gmail.com'
 
-EMAIL_HOST_PASSWORD = os.environ.get("SERVICE_PASSWORD")
+EMAIL_HOST_PASSWORD = 'whqffxthvbvnkvnt'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # DRF API Logger
 # https://github.com/vishalanandl177/DRF-API-Logger
 DRF_API_LOGGER_DATABASE = True
-
 
 REDIS_HOST = '0.0.0.0'
 REDIS_PORT = '6379'

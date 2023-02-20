@@ -19,18 +19,18 @@ class QueUserAdmin(UserAdmin):
         (_('Info'),
          {'fields': (
              'phone', 'smart_photos', 'birthday', 'city',
-             'bio', "gender", 'photo1', 'is_verified')}),
+             'bio', 'gender', 'photo1', 'is_verified')}),
     )
 
 
 @admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
-    list_display = ('user_account_id', 'spotify', 'instagram')
+    list_display = ('spotify', 'instagram')
 
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('education',)
 
 
 @admin.register(UserAPIKeyModel)
