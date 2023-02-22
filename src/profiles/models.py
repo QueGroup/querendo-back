@@ -175,7 +175,7 @@ class QueUser(AbstractUser, TimeBasedModel):
     personality_type = models.OneToOneField(PersonalityType, on_delete=models.CASCADE, null=True)
     education = models.OneToOneField(Education, on_delete=models.CASCADE, null=True)
     interests = models.OneToOneField(Interests, on_delete=models.CASCADE, null=True)
-
+    reset_password_otp = models.CharField(max_length=6, null=True, blank=True)
     USERNAME_FIELD = 'email'
     objects = UserManager()
     REQUIRED_FIELDS = ["id", "username"]
@@ -183,6 +183,8 @@ class QueUser(AbstractUser, TimeBasedModel):
     email = models.EmailField(unique=True)
     otp = models.CharField(max_length=128, blank=True)
     is_verified = models.BooleanField(default=False)
+    reset_password_requested_at = models.DateTimeField(null=True, blank=True)
+    reset_password_code_expired_at = models.DateTimeField(null=True, blank=True)
 
 
 class UserAPIKeyModel(AbstractAPIKey):
