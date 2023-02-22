@@ -19,7 +19,7 @@ class QueUserAdmin(UserAdmin):
         (_('Info'),
          {'fields': (
              'phone', 'smart_photos', 'birthday', 'city',
-             'bio', 'gender', 'photo1', 'is_verified')}),
+             'bio', 'gender', 'is_verified')}),
     )
 
 
