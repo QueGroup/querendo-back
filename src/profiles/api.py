@@ -1,15 +1,15 @@
 from django.contrib.auth import authenticate, login
-from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import CreateView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from .serializers import UserQuePublicSerializer, UserListSerializer, UserSerializer, UserLoginSerializer
+from .serializers import UserQuePublicSerializer, UserListSerializer, UserSerializer, UserLoginSerializer, \
+    ResetPasswordSerializer, ResetPasswordRequestSerializer
 from .serializers import VerifyAccountSerializer
 from rest_framework import permissions, status, viewsets
 from .models import QueUser
 from .tasks import check_age
 from rest_framework.response import Response
-from .emails import send_otp_to_email
+from .emails import send_otp_to_email, generate_reset_password_otp, send_reset_password_otp_to_email
 
 
 class UserQuePublicAPI(viewsets.ModelViewSet):
@@ -151,4 +151,90 @@ class LoginAPI(viewsets.ModelViewSet):
             return Response({
                 'status': status.HTTP_400_BAD_REQUEST,
                 'message': 'Invalid email and/or password',
+            })
+
+
+class ResetPasswordRequestAPI(viewsets.ModelViewSet):
+    """
+    Class for handling password reset requests by email
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordRequestSerializer
+    queryset = QueUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data['email']
+
+            user = QueUser.objects.filter(email=email).first()
+            if not user:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Invalid email',
+                    'data': serializer.data
+                })
+            reset_password_otp = generate_reset_password_otp()
+            user.reset_password_otp = reset_password_otp
+            user.save()
+            send_reset_password_otp_to_email(email, reset_password_otp)
+
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Reset password OTP sent to your email',
+                'data': serializer.data
+            })
+        except Exception as error:
+            print(error)
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Something went wrong'
+            })
+
+
+class ResetPasswordAPI(viewsets.ModelViewSet):
+    """
+    Class for handling password reset with OTP
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+    queryset = QueUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            email = serializer.validated_data['email']
+            otp = serializer.validated_data['otp']
+            new_password = serializer.validated_data['new_password']
+
+            user = QueUser.objects.filter(email=email).first()
+            if not user:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Invalid email',
+                    'data': serializer.data
+                })
+            if not user.reset_password_otp == otp:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Wrong OTP',
+                    'data': serializer.data
+                })
+
+            user.set_password(new_password)
+            user.reset_password_otp = None
+            user.save()
+
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Password reset successful',
+                'data': serializer.data
+            })
+        except Exception as error:
+            print(error)
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Wrong',
             })
