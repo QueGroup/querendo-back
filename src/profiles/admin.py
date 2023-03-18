@@ -1,9 +1,14 @@
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
 from rest_framework_api_key.admin import APIKeyModelAdmin
 
-from .models import QueUser, SocialLink, Education, UserAPIKeyModel
+from .models import QueUser, SocialLink, Education, UserAPIKeyModel, UserPhotos
+
+
+class UserPhotosInline(admin.TabularInline):
+    model = UserPhotos
+    extra = 1
 
 
 @admin.register(QueUser)
@@ -21,6 +26,7 @@ class QueUserAdmin(UserAdmin):
              'phone', 'smart_photos', 'birthday', 'city',
              'bio', 'gender', 'is_verified')}),
     )
+    inlines = [UserPhotosInline]
 
 
 @admin.register(SocialLink)

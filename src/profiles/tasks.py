@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from config.celery import app
 from .models import QueUser
-from datetime import datetime
 
 
 @app.task()
