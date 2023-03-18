@@ -14,7 +14,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
-drf-yasg==1.21.4
+drf-yasg==1.21.5
 graphene==3.2.1
 graphene-django==3.0.0
 graphql-core==3.2.3
@@ -48,4 +48,8 @@ psycopg2-binary==2.9.5
 pytest~=7.2.1
 django-cities-light~=3.9.2
 django-filter==22.1
+django-birthday~=0.1.4
+drf-api-logger==1.1.12
 celery~=5.2.7
+djangorestframework-api-key==2.3.0
+model-bakery==1.10.1

@@ -2,8 +2,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-# import ../
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,12 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_api_key',
     'djoser',
-    'cities_light',
     'drf_yasg',
+    'drf_api_logger',
     'corsheaders',
     'src.profiles',
     'src.likes',
+    'src.chat',
 ]
 
 MIDDLEWARE = [
@@ -43,9 +43,12 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'config.middleware.UserLanguageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,9 +77,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("POSTGRES_DB", "postgres"),
+        "NAME": os.environ.get("POSTGRES_DB", "org_chart"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "12345678"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "query1234"),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
@@ -117,7 +120,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -135,6 +138,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework_api_key.permissions.HasAPIKey',
 
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -153,7 +157,7 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
-        "user_create": "src.profiles.serializers.CreateUser"
+        # "user_create": "src.profiles.serializers.CreateUser"
     },
 }
 
@@ -192,17 +196,20 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:9000",
 ]
 
-# sending email settings
+# Sending email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-DOMAIN_NAME = 'http://127.0.0.1:8000'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = '2525'
-# EMAIL_USE_TLS = True
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-REDIS_HOST = '127.0.0.1'
+# DRF API Logger
+# https://github.com/vishalanandl177/DRF-API-Logger
+DRF_API_LOGGER_DATABASE = True
+
+REDIS_HOST = '0.0.0.0'
 REDIS_PORT = '6379'
 
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
