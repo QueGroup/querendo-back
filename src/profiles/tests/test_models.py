@@ -1,4 +1,5 @@
 import os
+
 from django.test import TestCase
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
