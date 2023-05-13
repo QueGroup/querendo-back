@@ -2,12 +2,9 @@
 <h1 align="center">Querendo</h1>
 
 > An open source backend for dating system
-
 <!---
 <p align="center">
-
   <img src="https://user-images.githubusercontent.com/72649244/183296141-939297c9-f8d5-46fb-ab32-f569bfe45582.png">
-
 </p>
 --->
 
@@ -62,14 +59,15 @@ $ pip install -r requirements.txt
 $ https://github.com/QueGroup/Querendo.git
 ```
 
-<br>
+### Release History
 
-### <i>Comming soon...<i>
-
-<br>
+- 0.0.1
+    - Begin a project
 
 ## :scroll: License
 
-License:\
+License:
+
 [CC0 1.0 Universal](LICENSE)
+
 ![image](https://user-images.githubusercontent.com/72649244/183296318-59fbd00a-c52a-40fe-ba82-1219183f5033.png)
