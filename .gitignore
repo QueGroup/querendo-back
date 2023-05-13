@@ -128,10 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Another
-venv
-src/profiles/migrations/
-src/likes/migrations/
-.env.dev
-.idea/*
-media/
+*/migrations/*
+!*/migrations/__init__.py
+/static/
+.idea
+*/idea/
