@@ -9,7 +9,7 @@ environ.Env.read_env(env.str(root(), '.env'))
 
 BASE_DIR = root
 
-SECRET_KEY = env.str("SECRET_KEY")
+SECRET_KEY = env.str("SECRET_KEY", "5iku0lh7jvw%r!r-#c372s+qt1q8)0mezmak_v@!n9(_8g=nx%")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 
