@@ -3,8 +3,12 @@ from django.db import models
 
 
 class TimeBasedMixin(models.Model):
-    created_at = models.DateTimeField('Created at', null=True, blank=False)
-    updated_at = models.DateTimeField('Updated at', null=True, blank=False)
+    created_at = models.DateTimeField(
+        verbose_name='Created at', null=True, blank=False, auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        verbose_name='Updated at', null=True, blank=False, auto_now=True
+    )
 
     class Meta:
         abstract = True
