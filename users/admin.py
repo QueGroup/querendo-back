@@ -4,25 +4,44 @@ from django.utils.translation import gettext_lazy as _
 from image_uploader_widget.admin import ImageUploaderInline
 
 from users.models.users import User
-from users.models.profile import Profile, UserPhotos
+from users.models import profiles
 
 
-class ProfileAdmin(admin.StackedInline):
-    model = Profile
+class ProfileAdminInline(admin.StackedInline):
+    model = profiles.Profile
     fields = (
         'telegram_id',
         'gender',
         'age',
+        'country',
+        'city',
+        'latitude',
+        'longitude',
+        'date_of_birth',
+        'occupation',
+        'ideal_match',
+        'interests',
     )
 
 
-class PhotoAdmin(ImageUploaderInline):
-    model = UserPhotos
+class FilterAdminInline(admin.StackedInline):
+    model = profiles.Filters
+    fields = (
+        'radius',
+        'gender',
+        'min_age',
+        'max_age',
+    )
 
 
-@admin.register(UserPhotos)
+class PhotoInline(ImageUploaderInline):
+    model = profiles.UserPhotos
+
+
+@admin.register(profiles.UserPhotos)
 class UserPhotosAdmin(admin.ModelAdmin):
     pass
+
 
 
 @admin.register(User)
@@ -52,4 +71,4 @@ class UserAdmin(UserAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
     readonly_fields = ('last_login',)
 
-    inlines = (ProfileAdmin, PhotoAdmin)
+    inlines = (ProfileAdminInline, PhotoInline, FilterAdminInline)
