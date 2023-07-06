@@ -1,14 +1,24 @@
-from datetime import timedelta
+import logging
 
 import environ
+from datetime import timedelta
 import os
 
-root = environ.Path(__file__) - 2
+if os.name == 'nt':  # For Windows
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo\\data\\proj') + ';' + os.environ['PATH']
+elif os.name == 'posix':  # For macOS
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'lib/python3.9/site-packages/osgeo') + ':' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'lib/python3.9/site-packages/osgeo/data/proj') + ':' + os.environ[
+        'PATH']
+
+root = environ.Path(__file__) - 3
 env = environ.Env()
 environ.Env.read_env(env.str(root(), '.env'))
 
 BASE_DIR = root
-
 SECRET_KEY = env.str("SECRET_KEY", "5iku0lh7jvw%r!r-#c372s+qt1q8)0mezmak_v@!n9(_8g=nx%")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
@@ -23,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 ]
 
 # Packages
@@ -47,11 +58,7 @@ INSTALLED_APPS += [
 
 ]
 
-AUTH_USER_MODEL = 'users.User'
-# AUTHENTICATION_BACKENDS = ('users.backends.AuthBackend',)
-
 # After apps
-
 INSTALLED_APPS += [
     'drf_spectacular',
 ]
@@ -65,9 +72,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.middleware.LoggingMiddleware',
 ]
-
-ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -85,24 +91,34 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+# FOR GEODJANGO
+POSTGIS_VERSION = (2, 4, 3)
 
-POSTGRES_DB = env.str("POSTGRES_DB")
-POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
-POSTGRES_USER = env.str("POSTGRES_USER")
-POSTGRES_HOST = env.str("POSTGRES_HOST")
-POSTGRES_PORT = env.int("POSTGRES_PORT")
+try:
+    POSTGRES_DB = env.str("POSTGRES_DB")
+    POSTGRES_PASSWORD = env.str("POSTGRES_PASSWORD")
+    POSTGRES_USER = env.str("POSTGRES_USER")
+    POSTGRES_HOST = env.str("POSTGRES_HOST")
+    POSTGRES_PORT = env.int("POSTGRES_PORT")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": POSTGRES_DB,
-        "USER": POSTGRES_USER,
-        "PASSWORD": POSTGRES_PASSWORD,
-        "HOST": POSTGRES_HOST,
-        "PORT": POSTGRES_PORT
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": POSTGRES_DB,
+            "USER": POSTGRES_USER,
+            "PASSWORD": POSTGRES_PASSWORD,
+            "HOST": POSTGRES_HOST,
+            "PORT": POSTGRES_PORT
+        }
     }
-}
+except Exception as ex:
+    logging.info(ex)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 # DJANGO REST FRAMEWORK
 REST_FRAMEWORK = {
@@ -122,41 +138,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-# LOCALISATION
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
-# STATIC AND MEDIA
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# CORS HEADERS
-CORS_ALLOWED_ALL = True
-CORS_ALLOWED_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ["*"]
-CSRF_COOKIE_SECURE = False
 
 # DRF SPECTACULAR
 SPECTACULAR_SETTINGS = {
@@ -183,7 +164,6 @@ SPECTACULAR_SETTINGS = {
 }
 
 # DJOSER
-
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
@@ -191,6 +171,21 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {},
 }
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -217,9 +212,77 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=7),
 }
 
+AUTH_USER_MODEL = 'users.User'
+
+WSGI_APPLICATION = 'config.wsgi.application'
+
+ROOT_URLCONF = 'config.urls'
+
+# STATIC AND MEDIA
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# LOCALISATION
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+# CORS HEADERS
+CORS_ALLOWED_ALL = True
+CORS_ALLOWED_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
+CSRF_COOKIE_SECURE = False
+
 LOGIN_REDIRECT_URL = '/'
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'color_formatter',
+        },
+    },
+    'formatters': {
+        'color_formatter': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(log_color)s%(asctime)s [%(levelname)s] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+            'log_colors': {
+                'DEBUG': 'cyan',
+                'INFO': 'green',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
+                'CRITICAL': 'red,bg_yellow',
+            },
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Установите желаемый уровень логирования
+    },
+}
+
+STRUCTLOG_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': ['console'],
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Установите желаемый уровень логирования
+            'propagate': True,
+        },
+    },
+}
 
 # ADMIN SETTINGS
 JAZZMIN_SETTINGS = {
@@ -358,4 +421,15 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "horizontal_tabs",
     # override change forms on a per modeladmin basis
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+}
+
+# https://docs.djangoproject.com/en/4.2/topics/cache/
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "db": "10",
+        },
+    }
 }
