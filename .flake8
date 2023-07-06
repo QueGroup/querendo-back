@@ -6,4 +6,4 @@ exclude =
     .gitignore
     README.md
     requirements.txt
-max-line-length = 88
+max-line-length = 120
