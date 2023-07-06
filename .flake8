@@ -1,0 +1,9 @@
+[flake8]
+exclude =
+    */venv/*
+    */migrations/*
+    .env
+    .gitignore
+    README.md
+    requirements.txt
+max-line-length = 88
