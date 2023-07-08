@@ -31,15 +31,15 @@ class Profile(models.Model):
         to='users.User', on_delete=models.CASCADE,
         related_name='profile', primary_key=True,
     )
+    telegram_id = models.PositiveBigIntegerField(
+        verbose_name='Телеграм ID', null=True, blank=True
+    )
     gender = models.CharField(
         verbose_name="пол пользователя", max_length=16, null=True, blank=True
     )
     age = models.PositiveIntegerField(
         verbose_name="Возраст пользователя", null=True, blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(90)]
-    )
-    telegram_id = models.PositiveBigIntegerField(
-        verbose_name='Телеграм ID', null=True, blank=True
     )
 
     date_of_birth = models.DateField(null=True, blank=True)

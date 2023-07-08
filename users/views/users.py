@@ -1,3 +1,5 @@
+from typing import Any
+
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import generics
 
@@ -7,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
+from common.views.mixins import ListViewSet
 from users.models.users import User
 from users.serializers.api import users as user_s
 
@@ -28,7 +31,7 @@ class RegistrationView(generics.CreateAPIView):
 )
 class ChangePasswordView(APIView):
 
-    def get_serializer(self, *args, **kwargs):
+    def get_serializer(self, *args: Any, **kwargs: Any):
         return user_s.ChangePasswordSerializer(*args, **kwargs)
 
     def post(self, request: Request) -> Response:
@@ -56,3 +59,12 @@ class MyView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+@extend_schema_view(
+    list=extend_schema(summary='Список пользователей Search', tags=["Словари"])
+)
+class UserListSearchView(ListViewSet):
+    # TODO: Убрать из списка superusers
+    queryset = User.objects.all()
+    serializer_class = user_s.UserSearchListSerializer

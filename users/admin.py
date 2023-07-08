@@ -43,6 +43,13 @@ class UserPhotosAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(profiles.Interest)
+class UserInterestAdmin(admin.ModelAdmin):
+    model = profiles.Interest
+    fields = (
+        'name',
+    )
+
 
 @admin.register(User)
 class UserAdmin(UserAdmin):

@@ -6,6 +6,11 @@ from users.models.users import User
 
 
 @receiver(post_save, sender=User)
-def post_save_user(sender, instance, created, **kwargs):
+def post_save_user(
+        sender: object,
+        instance: User,
+        created: bool,
+        **kwargs: dict
+) -> None:
     if not hasattr(instance, 'profile'):
         Profile.objects.create(user=instance)

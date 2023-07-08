@@ -1,11 +1,20 @@
-from typing import Optional, Any
+from typing import (
+    Optional,
+    Any,
+    Union,
+    NoReturn,
+)
 
-from django.contrib.auth.base_user import BaseUserManager
-from rest_framework.exceptions import ParseError
+from django.contrib.auth.base_user import (
+    BaseUserManager,
+)
+from rest_framework.exceptions import (
+    ParseError,
+)
 
 
 class CustomUserManager(BaseUserManager):
-    use_in_migrations = True
+    use_in_migrations: bool = True
 
     def _create_user(
             self,
@@ -14,7 +23,7 @@ class CustomUserManager(BaseUserManager):
             password: Optional[str] = None,
             username: Optional[str] = None,
             **extra_fields: Any,
-    ) -> Any:
+    ) -> Union[NoReturn, Any]:
         if not (email or phone_number or username):
             raise ParseError("Укажите email или телефон")
 
@@ -44,7 +53,7 @@ class CustomUserManager(BaseUserManager):
             password: Optional[str] = None,
             username: Optional[str] = None,
             **extra_fields: Any
-    ):
+    ) -> Any:
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_active', True)
@@ -60,7 +69,7 @@ class CustomUserManager(BaseUserManager):
             password: Optional[str] = None,
             username: Optional[str] = None,
             **extra_fields: Any
-    ):
+    ) -> Any:
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_active', True)
