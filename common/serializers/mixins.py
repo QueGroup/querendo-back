@@ -6,7 +6,7 @@ class ExtendedModelSerializer(serializers.ModelSerializer):
     class Meta:
         abstract = True
 
-    def get_from_url(self, lookup_field) :
+    def get_from_url(self, lookup_field):
         assert 'view' in self.context, (
                 'No view context in "%s". '
                 'Check parameter context on function calling.' % self.__class__.__name__
