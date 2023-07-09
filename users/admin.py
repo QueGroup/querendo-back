@@ -3,14 +3,13 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from image_uploader_widget.admin import ImageUploaderInline
 
-from users.models.users import User
 from users.models import profiles
+from users.models.users import User
 
 
 class ProfileAdminInline(admin.StackedInline):
     model = profiles.Profile
     fields = (
-        'telegram_id',
         'gender',
         'age',
         'country',
@@ -20,7 +19,7 @@ class ProfileAdminInline(admin.StackedInline):
         'date_of_birth',
         'occupation',
         'ideal_match',
-        'interests',
+        'interests'
     )
 
 
@@ -47,7 +46,7 @@ class UserPhotosAdmin(admin.ModelAdmin):
 class UserInterestAdmin(admin.ModelAdmin):
     model = profiles.Interest
     fields = (
-        'name',
+       "name",
     )
 
 
@@ -55,7 +54,7 @@ class UserInterestAdmin(admin.ModelAdmin):
 class UserAdmin(UserAdmin):
     change_user_password_template = None
     fieldsets = (
-        (None, {'fields': ('phone_number', 'email',)}),
+        (None, {'fields': ('phone_number', 'email', 'telegram_id')}),
         (_('Личная информация'),
          {'fields': ('first_name', 'last_name',)}),
         (_('Permissions'), {

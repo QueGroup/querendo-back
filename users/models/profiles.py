@@ -1,12 +1,11 @@
 from datetime import date
 
+from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance, D
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-from users.base.services import image_filename
 from django.db import models
 
-from django.contrib.gis.geos import Point
+from users.base.services import image_filename
 
 
 class Interest(models.Model):
@@ -31,9 +30,7 @@ class Profile(models.Model):
         to='users.User', on_delete=models.CASCADE,
         related_name='profile', primary_key=True,
     )
-    telegram_id = models.PositiveBigIntegerField(
-        verbose_name='Телеграм ID', null=True, blank=True
-    )
+
     gender = models.CharField(
         verbose_name="пол пользователя", max_length=16, null=True, blank=True
     )
@@ -49,9 +46,8 @@ class Profile(models.Model):
     ideal_match = models.CharField(
         max_length=20, null=True, blank=True
     )
-
     interests = models.ManyToManyField(
-        verbose_name="Интересы", to=Interest, blank=True
+        verbose_name="Интересы", blank=True, to=Interest
     )
     description = models.CharField(
         verbose_name='Описание профиля', max_length=512, null=True, blank=True

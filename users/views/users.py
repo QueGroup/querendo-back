@@ -2,7 +2,6 @@ from typing import Any
 
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import generics
-
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -15,7 +14,7 @@ from users.serializers.api import users as user_s
 
 
 @extend_schema_view(
-    post=extend_schema(summary='Регистрация пользователя', tags=['Аутентификация & Авторизация'])
+    post=extend_schema(summary="Регистрация пользователя", tags=["Аутентификация & Авторизация"])
 )
 class RegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -24,10 +23,19 @@ class RegistrationView(generics.CreateAPIView):
 
 
 @extend_schema_view(
+    post=extend_schema(summary="Регистрация пользователя в telegram", tags=["Аутентификация & Авторизация"])
+)
+class TelegramRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = user_s.TelegramRegistration
+
+
+@extend_schema_view(
 
     post=extend_schema(
         summary="Смена пароля",
-        tags=['Аутентификация & Авторизация'], )
+        tags=["Аутентификация & Авторизация"], )
 )
 class ChangePasswordView(APIView):
 
@@ -45,24 +53,30 @@ class ChangePasswordView(APIView):
 
 
 @extend_schema_view(
-    get=extend_schema(summary="Профиль пользователя", tags=['Пользователи']),
-    patch=extend_schema(summary="Изменить частично пользователя", tags=['Пользователи'])
+    get=extend_schema(summary="Профиль пользователя", tags=["Пользователи"]),
+    put=extend_schema(summary="Изменить профиль пользователя", tags=["Пользователи"]),
+    patch=extend_schema(summary="Изменить частично пользователя", tags=["Пользователи"]),
+    delete=extend_schema(summary="Удалить профиль", tags=["Пользователи"])
 )
-class MyView(generics.RetrieveUpdateDestroyAPIView):
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    http_method_names = ("get", "patch")
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
-            return user_s.MeListSerializer
-        return user_s.MeUpdateSerializer
+        if self.request.method in ["PUT", "PATCH"]:
+            return user_s.MeUpdateSerializer
+        return user_s.MeListSerializer
 
     def get_object(self):
         return self.request.user
 
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Профиль успешно удален"}, status=HTTP_204_NO_CONTENT)
+
 
 @extend_schema_view(
-    list=extend_schema(summary='Список пользователей Search', tags=["Словари"])
+    list=extend_schema(summary="Список пользователей Search", tags=["Словари"])
 )
 class UserListSearchView(ListViewSet):
     # TODO: Убрать из списка superusers

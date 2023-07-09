@@ -24,3 +24,13 @@ class ExtendedModelSerializer(serializers.ModelSerializer):
             queryset=model.objects.all(), **{model_field: obj_id}
         )
         return obj
+
+
+class ExtendedListSerializer(serializers.ListSerializer):
+    def update(self, instance, validated_data):
+        for index, item_data in enumerate(validated_data):
+            item_instance = instance[index]
+
+            self.child.update(item_instance, item_data)
+
+        return instance

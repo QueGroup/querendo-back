@@ -1,16 +1,39 @@
-from collections import OrderedDict
-from typing import Union
+from collections import (
+    OrderedDict,
+)
+from typing import (
+    Union,
+)
 
-from django.contrib.auth.password_validation import validate_password
-from django.db import transaction
-from rest_framework import serializers
-from rest_framework.exceptions import ParseError
+from django.contrib.auth.password_validation import (
+    validate_password,
+)
+from django.db import (
+    transaction,
+)
+from rest_framework import (
+    serializers,
+)
+from rest_framework.exceptions import (
+    ParseError,
+)
 
-from users.models.users import User
-from users.serializers.nested.profile import ProfileShortSerializer, ProfileUpdateSerializer
+from common.serializers.mixins import (
+    ExtendedModelSerializer,
+)
+from users.models.users import (
+    User,
+)
+from users.serializers.nested import (
+    ProfileUpdateSerializer,
+    PhotosShortSerializer,
+    ProfileShortSerializer,
+    UserFilterShortSerializer,
+)
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+
+class RegistrationSerializer(ExtendedModelSerializer):
     email = serializers.EmailField
     password = serializers.CharField(write_only=True)
 
@@ -18,17 +41,16 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id',
-            'first_name',
+            'username',
             'email',
             'password',
-            'username',
         )
 
     @staticmethod
     def validate_email(value: str):
         email = value.lower()
         if User.objects.filter(email=email).exists():
-            raise ParseError(
+            raise serializers.ValidationError(
                 "Пользователь с такой почтой уже зарегистрирован"
             )
         return email
@@ -36,6 +58,29 @@ class RegistrationSerializer(serializers.ModelSerializer):
     @staticmethod
     def validate_password(value: str):
         validate_password(value)
+        return value
+
+    def create(self, validated_data: dict):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+
+class TelegramRegistration(ExtendedModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "telegram_id",
+            "username",
+            "password",
+        )
+
+    @staticmethod
+    def validate_username(value: str):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Это имя пользователя уже занято.")
         return value
 
     def create(self, validated_data: dict):
@@ -75,8 +120,11 @@ class ChangePasswordSerializer(serializers.Serializer):
         return instance
 
 
-class MeListSerializer(serializers.ModelSerializer):
+class MeListSerializer(ExtendedModelSerializer):
     profile = ProfileShortSerializer()
+    photos = PhotosShortSerializer()
+    filters = UserFilterShortSerializer()
+
 
     class Meta:
         model = User
@@ -87,12 +135,14 @@ class MeListSerializer(serializers.ModelSerializer):
             'email',
             'phone_number',
             'username',
-            'profile',
             'date_joined',
+            'profile',
+            'photos',
+            'filters',
         )
 
 
-class MeUpdateSerializer(serializers.ModelSerializer):
+class MeUpdateSerializer(ExtendedModelSerializer):
     profile = ProfileUpdateSerializer()
 
     class Meta:
@@ -126,7 +176,7 @@ class MeUpdateSerializer(serializers.ModelSerializer):
         profile_serializer.save()
 
 
-class UserSearchListSerializer(serializers.ModelSerializer):
+class UserSearchListSerializer(ExtendedModelSerializer):
     class Meta:
         model = User
         fields = (

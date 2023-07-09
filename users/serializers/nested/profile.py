@@ -1,43 +1,50 @@
-from rest_framework import serializers
+from common.serializers.mixins import ExtendedModelSerializer
+from users.models.profiles import Profile, Interest
 
-from users.models.profiles import Profile
 
-
-# TODO: Добавить еще сериализатор, чтобы пользователь мог добавлять фотографии
-#       Также добавить сериализатор для интересов
-class ProfileShortSerializer(serializers.ModelSerializer):
+class InterestSerializer(ExtendedModelSerializer):
     class Meta:
-        model = Profile
+        model = Interest
         fields = (
-            'telegram_id',
-            'gender',
-            'age',
-            'date_of_birth',
-            'occupation',
-            'interests',
-            'description',
-            'language',
-            'country',
-            'city',
-            'longitude',
-            'latitude',
+            "__all__"
         )
 
 
-class ProfileUpdateSerializer(serializers.ModelSerializer):
+class ProfileShortSerializer(ExtendedModelSerializer):
+    interests = InterestSerializer(many=True)
+
     class Meta:
         model = Profile
         fields = (
-            'telegram_id',
             'gender',
             'age',
             'date_of_birth',
             'occupation',
-            'interests',
             'description',
             'language',
             'country',
             'city',
             'longitude',
             'latitude',
+            'interests',
+        )
+
+
+class ProfileUpdateSerializer(ExtendedModelSerializer):
+    interests = InterestSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'gender',
+            'age',
+            'date_of_birth',
+            'occupation',
+            'description',
+            'language',
+            'country',
+            'city',
+            'longitude',
+            'latitude',
+            'interests',
         )

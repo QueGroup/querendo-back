@@ -1,18 +1,16 @@
 import logging
+import os
+from datetime import timedelta
 
 import environ
-from datetime import timedelta
-import os
 
 if os.name == 'nt':  # For Windows
     VENV_BASE = os.environ['VIRTUAL_ENV']
     os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo') + ';' + os.environ['PATH']
     os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo\\data\\proj') + ';' + os.environ['PATH']
 elif os.name == 'posix':  # For macOS
-    VENV_BASE = os.environ['VIRTUAL_ENV']
-    os.environ['PATH'] = os.path.join(VENV_BASE, 'lib/python3.9/site-packages/osgeo') + ':' + os.environ['PATH']
-    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'lib/python3.9/site-packages/osgeo/data/proj') + ':' + os.environ[
-        'PATH']
+    GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
+    GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
 
 root = environ.Path(__file__) - 3
 env = environ.Env()
@@ -21,7 +19,7 @@ environ.Env.read_env(env.str(root(), '.env'))
 BASE_DIR = root
 SECRET_KEY = env.str("SECRET_KEY", "5iku0lh7jvw%r!r-#c372s+qt1q8)0mezmak_v@!n9(_8g=nx%")
 DEBUG = env.bool("DEBUG", default=False)
-ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
+ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='*').split(' ')
 
 # Based
 INSTALLED_APPS = [
@@ -242,34 +240,6 @@ LOGIN_REDIRECT_URL = '/'
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'color_formatter',
-        },
-    },
-    'formatters': {
-        'color_formatter': {
-            '()': 'colorlog.ColoredFormatter',
-            'format': '%(log_color)s%(asctime)s [%(levelname)s] %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-            'log_colors': {
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red,bg_yellow',
-            },
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',  # Установите желаемый уровень логирования
-    },
-}
 
 STRUCTLOG_CONFIG = {
     'version': 1,

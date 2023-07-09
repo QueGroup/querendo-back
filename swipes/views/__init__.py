@@ -1,0 +1,1 @@
+from .swipes import QuestionnairesListView
