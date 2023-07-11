@@ -14,11 +14,13 @@ class Interest(models.Model):
         verbose_name_plural = 'Интересы'
 
     name = models.CharField(
-        verbose_name='интересы', max_length=32, null=True, blank=True
+        verbose_name='интересы', max_length=32, unique=False
     )
 
+    # id = models.AutoField(primary_key=True)
+
     def __str__(self):
-        return f'{self.name}'
+        return f"({self.name})"
 
 
 class Profile(models.Model):
@@ -106,7 +108,7 @@ class Filters(models.Model):
         verbose_name='Радиус (в километрах)', null=True, blank=True,
     )
     gender = models.CharField(
-        verbose_name='Пол партнера', null=True, blank=True,
+        verbose_name='Пол партнера', null=True, blank=True, max_length=16
     )
     min_age = models.PositiveIntegerField(
         verbose_name="Минимальный возраст", null=True, blank=True,

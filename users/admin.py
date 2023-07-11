@@ -45,9 +45,7 @@ class UserPhotosAdmin(admin.ModelAdmin):
 @admin.register(profiles.Interest)
 class UserInterestAdmin(admin.ModelAdmin):
     model = profiles.Interest
-    fields = (
-       "name",
-    )
+    list_display = ('id', 'name',)
 
 
 @admin.register(User)
