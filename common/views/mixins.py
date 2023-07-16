@@ -1,5 +1,5 @@
-from rest_framework.generics import (
-    GenericAPIView,
+from rest_framework import (
+    generics,
 )
 from rest_framework.mixins import (
     ListModelMixin,
@@ -119,7 +119,24 @@ class LCDViewSet(
     pass
 
 
-class ExtendedGenericAPIView(ExtendedView, GenericAPIView):
+class LRUDAPIView(
+    ListModelMixin,
+    generics.RetrieveUpdateDestroyAPIView
+):
+    pass
+
+
+class LCRUView(
+    generics.ListCreateAPIView,
+    generics.RetrieveAPIView,
+    generics.GenericAPIView
+):
+    pass
+
+
+class ExtendedGenericAPIView(
+    ExtendedView, generics.GenericAPIView
+):
     pass
 
 

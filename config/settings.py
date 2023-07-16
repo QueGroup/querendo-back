@@ -171,6 +171,7 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {},
+    'TOKEN_MODEL': None
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -240,9 +241,6 @@ CORS_ALLOW_HEADERS = ["*"]
 CSRF_COOKIE_SECURE = False
 
 LOGIN_REDIRECT_URL = '/'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 STRUCTLOG_CONFIG = {
     'version': 1,
@@ -392,7 +390,7 @@ JAZZMIN_SETTINGS = {
     # - collapsible
     # - carousel
     "changeform_format": "horizontal_tabs",
-    # override change forms on a per modeladmin basis
+    # override change forms on a per model admin basis
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
 }
 
@@ -406,5 +404,3 @@ CACHES = {
         },
     }
 }
-
-
