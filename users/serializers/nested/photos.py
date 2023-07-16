@@ -1,5 +1,5 @@
 from common.serializers.mixins import ExtendedModelSerializer
-from users.models.profiles import UserPhotos
+from users.models import UserPhotos
 
 
 class PhotosShortSerializer(ExtendedModelSerializer):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models.profiles import Filters
+from users.models import Filters
 
 
 class UserFilterShortSerializer(serializers.ModelSerializer):

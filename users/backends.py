@@ -28,12 +28,22 @@ class AuthBacked(object):
 
     @staticmethod
     def authenticate(request: Request, username: str, password: str) -> Optional[User]:
-        try:
-            user = User.objects.get(
-                Q(username=username) |
-                Q(email=username) |
-                Q(phone_number=username)
-            )
-        except User.DoesNotExist:
-            return None
+        if request and request.path == '/users/telegram-auth/':
+            try:
+                user = User.objects.get(
+                    Q(username=username) &
+                    Q(telegram_id=username)
+                )
+            except User.DoesNotExist:
+                return None
+        else:
+            try:
+                user = User.objects.get(
+                    Q(username=username) |
+                    Q(email=username) |
+                    Q(phone_number=username)
+                )
+            except User.DoesNotExist:
+                return None
+
         return user if user.check_password(password) else None

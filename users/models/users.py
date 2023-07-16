@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+
 from users.managers import CustomUserManager
 
 
@@ -17,6 +18,10 @@ class User(AbstractUser):
     telegram_id = models.PositiveBigIntegerField(
         verbose_name="Telegram id", unique=True, null=True, blank=True
     )
+    is_verified = models.BooleanField(
+        verbose_name="Подтвержденный аккаунт", default=False
+    )
+
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email", ]
 

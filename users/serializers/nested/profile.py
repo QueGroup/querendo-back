@@ -1,14 +1,10 @@
 from common.serializers.mixins import ExtendedModelSerializer
-from users.models.profiles import Profile, Interest
-from rest_framework import serializers
+from users.models import (
+    Profile,
+    Interest
+)
 
-class InterestSerializer(ExtendedModelSerializer):
-    id = serializers.IntegerField()
-    class Meta:
-        model = Interest
-        fields = (
-            "__all__"
-        )
+from users.serializers.nested.interests import InterestSerializer
 
 
 class ProfileShortSerializer(ExtendedModelSerializer):
@@ -32,7 +28,6 @@ class ProfileShortSerializer(ExtendedModelSerializer):
 
 
 class ProfileUpdateSerializer(ExtendedModelSerializer):
-    interests = InterestSerializer(many=True)
 
     class Meta:
         model = Profile
@@ -47,6 +42,15 @@ class ProfileUpdateSerializer(ExtendedModelSerializer):
             'city',
             'longitude',
             'latitude',
+        )
+
+
+class ProfileInterestUpdateSerializer(ExtendedModelSerializer):
+    interests = InterestSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = (
             'interests',
         )
 
@@ -64,6 +68,7 @@ class ProfileUpdateSerializer(ExtendedModelSerializer):
             "__all__"
         )
         for field in fields:
+            print(field)
             try:
                 setattr(instance, field, validated_data[field])
             except KeyError:  # validated_data may not contain all fields during HTTP PATCH

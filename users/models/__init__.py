@@ -1,4 +1,6 @@
-from . import users
-from . import profiles
+from .filters import *
+from .interests import *
+from .photos import *
+from .profiles import *
+from .users import *
 
-__all__ = ('users', 'profiles')

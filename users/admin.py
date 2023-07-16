@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from image_uploader_widget.admin import ImageUploaderInline
 
-from users.models import profiles
+from users.models import profiles, filters, interests, photos
 from users.models.users import User
 
 
@@ -24,7 +24,7 @@ class ProfileAdminInline(admin.StackedInline):
 
 
 class FilterAdminInline(admin.StackedInline):
-    model = profiles.Filters
+    model = filters.Filters
     fields = (
         'radius',
         'gender',
@@ -34,17 +34,17 @@ class FilterAdminInline(admin.StackedInline):
 
 
 class PhotoInline(ImageUploaderInline):
-    model = profiles.UserPhotos
+    model = photos.UserPhotos
 
 
-@admin.register(profiles.UserPhotos)
+@admin.register(photos.UserPhotos)
 class UserPhotosAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(profiles.Interest)
+@admin.register(interests.Interest)
 class UserInterestAdmin(admin.ModelAdmin):
-    model = profiles.Interest
+    model = interests.Interest
     list_display = ('id', 'name',)
 
 
@@ -66,9 +66,9 @@ class UserAdmin(UserAdmin):
             'fields': ('email', 'phone_number', 'password1', 'password2',),
         }),
     )
-    list_display = ('id', 'full_name', 'email', 'phone_number',)
+    list_display = ('id', 'username', 'email', 'phone_number',)
 
-    list_display_links = ('id', 'full_name',)
+    list_display_links = ('id', 'username',)
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('first_name', 'last_name', 'id', 'email', 'phone_number',)
     ordering = ('-id',)
