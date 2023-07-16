@@ -5,7 +5,10 @@ from datetime import timedelta
 import environ
 
 if os.name == 'nt':  # For Windows
-    VENV_BASE = os.environ['VIRTUAL_ENV']
+    try:
+        VENV_BASE = os.environ['VIRTUAL_ENV']
+    except KeyError:
+        VENV_BASE = None
     os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo') + ';' + os.environ['PATH']
     os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib\\site-packages\\osgeo\\data\\proj') + ';' + os.environ['PATH']
 elif os.name == 'posix':  # For macOS
