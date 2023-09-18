@@ -19,7 +19,8 @@ from users.serializers.nested import (
     ProfileUpdateSerializer,
     PhotosShortSerializer,
     ProfileShortSerializer,
-    UserFilterShortSerializer, ProfileInterestUpdateSerializer,
+    UserFilterShortSerializer,
+    ProfileInterestUpdateSerializer,
 )
 
 
@@ -33,10 +34,10 @@ class MeListSerializer(ExtendedModelSerializer):
         fields = (
             'id',
             'first_name',
-            'email',
             'phone_number',
             'username',
-            'date_joined',
+            'created_at',
+            'telegram_id',
             'profile',
             'photos',
             'filters',
@@ -44,7 +45,6 @@ class MeListSerializer(ExtendedModelSerializer):
 
 
 class MeUpdateSerializer(ExtendedModelSerializer):
-    profile = ProfileUpdateSerializer()
     photos = PhotosShortSerializer()
     filters = UserFilterShortSerializer()
 
@@ -53,23 +53,29 @@ class MeUpdateSerializer(ExtendedModelSerializer):
         fields = (
             'id',
             'first_name',
-            'email',
             'phone_number',
+            'telegram_id',
             'username',
-            'profile',
+            'gender',
+            'age',
+            'date_of_birth',
+            'occupation',
+            'description',
+            'language',
+            'country',
+            'city',
+            'longitude',
+            'latitude',
             'photos',
             'filters',
         )
 
     def update(self, instance: User, validated_data: dict):
-        profile_data = validated_data.pop('profile', None)
         photos_data = validated_data.pop('photos', None)
         filters_data = validated_data.pop('filters', None)
 
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            if profile_data:
-                self._update_profile(instance.profile, profile_data)
             if photos_data:
                 self._update_photos(instance.photos, photos_data)
             if filters_data:

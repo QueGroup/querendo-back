@@ -1,8 +1,9 @@
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
 
-class TimeBasedMixin(models.Model):
+class TimeBasedMixin(AbstractBaseUser):
     created_at = models.DateTimeField(
         verbose_name='Created at', auto_now_add=True
     )

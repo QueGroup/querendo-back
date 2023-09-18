@@ -1,6 +1,6 @@
 from common.serializers.mixins import ExtendedModelSerializer
 from users.models import (
-    Profile,
+    User,
     Interest
 )
 
@@ -11,7 +11,7 @@ class ProfileShortSerializer(ExtendedModelSerializer):
     interests = InterestSerializer(many=True)
 
     class Meta:
-        model = Profile
+        model = User
         fields = (
             'gender',
             'age',
@@ -28,9 +28,8 @@ class ProfileShortSerializer(ExtendedModelSerializer):
 
 
 class ProfileUpdateSerializer(ExtendedModelSerializer):
-
     class Meta:
-        model = Profile
+        model = User
         fields = (
             'gender',
             'age',
@@ -49,7 +48,7 @@ class ProfileInterestUpdateSerializer(ExtendedModelSerializer):
     interests = InterestSerializer(many=True)
 
     class Meta:
-        model = Profile
+        model = User
         fields = (
             'interests',
         )

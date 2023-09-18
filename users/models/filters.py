@@ -3,8 +3,6 @@ from django.contrib.gis.measure import Distance, D
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from users.models.profiles import Profile
-
 
 class Filters(models.Model):
     class Meta:
@@ -31,7 +29,7 @@ class Filters(models.Model):
 
     def find_profiles(self, latitude, longitude):
         user_location = Point(longitude, latitude, srid=4326)
-        profiles = Profile.objects.filter(
+        profiles = "users.User".objects.filter(
             gender=self.gender,
             age__range=(self.min_age, self.max_age),
             location__distance_lte=(user_location, D(km=self.radius))

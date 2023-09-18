@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 # Packages
 INSTALLED_APPS += [
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'corsheaders',
     'djoser',
@@ -131,6 +132,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',),
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
 
@@ -218,6 +220,11 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = (
+    'users.backends.AuthBacked',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

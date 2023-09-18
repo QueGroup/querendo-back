@@ -2,10 +2,12 @@ from drf_spectacular.utils import (
     extend_schema_view,
     extend_schema
 )
+from rest_framework.permissions import (
+    IsAuthenticated,
+)
 
 from common.permissions import (
     IsAdminOrReadOnly,
-    IsAuthenticated,
 )
 from common.views.mixins import (
     LCRUView,
@@ -16,7 +18,7 @@ from users.models.interests import (
 )
 from users.serializers.api import (
     users as user_s,
-    User
+    User,
 )
 from users.serializers.nested import (
     InterestUpdateSerializer

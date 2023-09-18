@@ -15,15 +15,6 @@ from users.serializers.api import (
 
 
 @extend_schema_view(
-    post=extend_schema(summary="Регистрация пользователя", tags=["Аутентификация & Авторизация"])
-)
-class RegistrationView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = [AllowAny]
-    serializer_class = auth.RegistrationSerializer
-
-
-@extend_schema_view(
     post=extend_schema(summary="Регистрация пользователя в telegram", tags=["Аутентификация & Авторизация"])
 )
 class TelegramRegistrationView(generics.CreateAPIView):

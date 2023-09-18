@@ -2,7 +2,7 @@ from drf_spectacular.utils import (
     extend_schema_view,
     extend_schema,
 )
-from rest_framework.parsers import MultiPartParser, FormParser
+# from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import (
     IsAuthenticated,
 )

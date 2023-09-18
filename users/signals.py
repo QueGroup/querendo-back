@@ -8,7 +8,6 @@ from django.dispatch import (
 from users.models import (
     Filters,
     UserPhotos,
-    Profile,
     User,
 )
 
@@ -20,8 +19,6 @@ def post_save_user(
         created: bool,
         **kwargs: dict
 ) -> None:
-    if not hasattr(instance, 'profile'):
-        Profile.objects.create(user=instance)
     if not hasattr(instance, 'filters'):
         Filters.objects.create(user=instance)
     if not hasattr(instance, 'photos'):
