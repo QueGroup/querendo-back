@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'jazzmin',
     # 'admin_soft.apps.AdminSoftDashboardConfig',
     'django.contrib.admin',
+    'rest_framework.authtoken',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -125,9 +126,11 @@ except Exception as ex:
 # DJANGO REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',),
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
 
@@ -242,7 +245,6 @@ CSRF_COOKIE_SECURE = False
 LOGIN_REDIRECT_URL = '/'
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 STRUCTLOG_CONFIG = {
     'version': 1,
@@ -406,5 +408,3 @@ CACHES = {
         },
     }
 }
-
-
