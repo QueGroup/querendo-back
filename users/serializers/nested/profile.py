@@ -1,14 +1,6 @@
 from common.serializers.mixins import ExtendedModelSerializer
-from users.models.profiles import Profile, Interest
-from rest_framework import serializers
-
-class InterestSerializer(ExtendedModelSerializer):
-    id = serializers.IntegerField()
-    class Meta:
-        model = Interest
-        fields = (
-            "__all__"
-        )
+from users.models.profiles import Interest, Profile
+from users.serializers.nested.interests import InterestSerializer
 
 
 class ProfileShortSerializer(ExtendedModelSerializer):
@@ -28,12 +20,12 @@ class ProfileShortSerializer(ExtendedModelSerializer):
             'longitude',
             'latitude',
             'interests',
+            'need_distance',
+            'ideal_match',
         )
 
 
 class ProfileUpdateSerializer(ExtendedModelSerializer):
-    interests = InterestSerializer(many=True)
-
     class Meta:
         model = Profile
         fields = (
@@ -47,6 +39,17 @@ class ProfileUpdateSerializer(ExtendedModelSerializer):
             'city',
             'longitude',
             'latitude',
+            'need_distance',
+            'ideal_match',
+        )
+
+
+class ProfileInterestUpdateSerializer(ExtendedModelSerializer):
+    interests = InterestSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = (
             'interests',
         )
 

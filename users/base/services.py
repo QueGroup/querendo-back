@@ -2,6 +2,8 @@ import os
 import uuid
 
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.deconstruct import deconstructible
 
 
 # from nudenet import detect
@@ -14,6 +16,15 @@ from django.core.exceptions import ValidationError
 #     def __call__(self, image):
 #         if not self.allows_nsfw and detect(image.read()):
 #             raise ValidationError("The image contains NSFW content")
+
+
+@deconstructible
+class IncrementalFilename:
+    def __call__(self, instance: models.Model, filename: str) -> str:
+        ext = os.path.splitext(filename)[1]
+        count = instance.__class__.objects.count() + 1
+        filename = f"{count}_page{ext}"
+        return os.path.join('brandbook/', filename)
 
 
 def image_filename(instance, filename):
