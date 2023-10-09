@@ -3,7 +3,11 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from image_uploader_widget.admin import ImageUploaderInline
 
-from users.models import profiles
+from users.models import (
+    profiles,
+    filters,
+    photos
+)
 from users.models.users import User
 
 
@@ -24,7 +28,7 @@ class ProfileAdminInline(admin.StackedInline):
 
 
 class FilterAdminInline(admin.StackedInline):
-    model = profiles.Filters
+    model = filters.Filters
     fields = (
         'radius',
         'gender',
@@ -34,10 +38,10 @@ class FilterAdminInline(admin.StackedInline):
 
 
 class PhotoInline(ImageUploaderInline):
-    model = profiles.UserPhotos
+    model = photos.UserPhotos
 
 
-@admin.register(profiles.UserPhotos)
+@admin.register(photos.UserPhotos)
 class UserPhotosAdmin(admin.ModelAdmin):
     pass
 
@@ -46,6 +50,12 @@ class UserPhotosAdmin(admin.ModelAdmin):
 class UserInterestAdmin(admin.ModelAdmin):
     model = profiles.Interest
     list_display = ('id', 'name',)
+
+
+@admin.register(photos.BrandBook)
+class BrandBookAdmin(admin.ModelAdmin):
+    model = photos.BrandBook
+    list_display = ('id', 'name_of_page', 'photo',)
 
 
 @admin.register(User)

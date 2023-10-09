@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from users.models import Filters, UserPhotos
 from users.models.profiles import Profile
 from users.models.users import User
 
@@ -12,5 +13,11 @@ def post_save_user(
         created: bool,
         **kwargs: dict
 ) -> None:
-    if not hasattr(instance, 'profile'):
-        Profile.objects.create(user=instance)
+    if created:
+        if not hasattr(instance, 'profile'):
+            Profile.objects.create(user=instance)
+        if not hasattr(instance, 'filters'):
+            Filters.objects.create(user=instance)
+        if not hasattr(instance, 'photos'):
+            UserPhotos.objects.create(user=instance)
+
