@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import Interest
@@ -16,11 +15,9 @@ class Profile(models.Model):
         to='users.User', on_delete=models.CASCADE,
         related_name='profile', primary_key=True,
     )
-
     gender = models.CharField(
         verbose_name="пол пользователя", max_length=16, null=True, blank=True
     )
-
     date_of_birth = models.DateField(null=True, blank=True)
     occupation = models.CharField(
         verbose_name='Занятость', max_length=64, null=True, blank=True
@@ -45,7 +42,6 @@ class Profile(models.Model):
     )
     longitude = models.FloatField(
         verbose_name="Долгота", null=True, blank=True
-
     )
     latitude = models.FloatField(
         verbose_name="Широта", null=True, blank=True

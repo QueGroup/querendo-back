@@ -1,12 +1,13 @@
 from common.serializers.mixins import ExtendedModelSerializer
 from users.models import BrandBook
-from users.models.photos import UserPhotos
+from users.models.photos import Photo
 
 
 class PhotosShortSerializer(ExtendedModelSerializer):
     class Meta:
-        model = UserPhotos
+        model = Photo
         fields = (
+            'id',
             'photo1',
             'photo2',
             'photo3',
@@ -15,10 +16,11 @@ class PhotosShortSerializer(ExtendedModelSerializer):
         )
 
 
-class TelegramPhotoSerializer(ExtendedModelSerializer):
+class PhotoSerializer(ExtendedModelSerializer):
     class Meta:
-        model = UserPhotos
+        model = Photo
         fields = (
+            "id",
             'photo1',
             'photo2',
             'photo3',
@@ -34,8 +36,9 @@ class TelegramPhotoSerializer(ExtendedModelSerializer):
 
 class TelegramPhotoShortSerializer(ExtendedModelSerializer):
     class Meta:
-        model = UserPhotos
+        model = Photo
         fields = (
+            "id",
             'file_id1',
             'file_id2',
             'file_id3',

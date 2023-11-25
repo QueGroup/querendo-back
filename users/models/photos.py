@@ -3,7 +3,7 @@ from django.db import models
 from users.base.services import image_filename, IncrementalFilename, validate_size_image
 
 
-class UserPhotos(models.Model):
+class Photo(models.Model):
     class Meta:
         app_label = 'users'
         verbose_name = 'Фотография пользователя'
@@ -52,6 +52,7 @@ class BrandBook(models.Model):
         app_label = 'users'
         verbose_name = "Брендбук"
         verbose_name_plural = "Брендбук"
+
     name_of_page = models.CharField(
         verbose_name="Название страницы", max_length=64, null=True, blank=True
     )

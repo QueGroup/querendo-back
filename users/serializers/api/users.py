@@ -8,7 +8,6 @@ from typing import (
 from django.db import (
     transaction,
 )
-from rest_framework import serializers
 
 from common.serializers.mixins import (
     ExtendedModelSerializer,
@@ -18,16 +17,19 @@ from users.models.users import (
 )
 from users.serializers.nested import (
     ProfileUpdateSerializer,
-    PhotosShortSerializer,
     ProfileShortSerializer,
-    UserFilterShortSerializer, ProfileInterestUpdateSerializer,
+    UserFilterShortSerializer,
+    ProfileInterestUpdateSerializer,
+    PhotoSerializer,
 )
 
 
 class MeListSerializer(ExtendedModelSerializer):
     profile = ProfileShortSerializer()
-    photos = PhotosShortSerializer()
+    photos = PhotoSerializer()
     filters = UserFilterShortSerializer()
+
+    # interests = InterestSerializer()
 
     class Meta:
         model = User
@@ -46,7 +48,7 @@ class MeListSerializer(ExtendedModelSerializer):
 
 
 class MeUpdateSerializer(ExtendedModelSerializer):
-    photos = PhotosShortSerializer()
+    photos = PhotoSerializer()
     filters = UserFilterShortSerializer()
     profile = ProfileUpdateSerializer()
 
@@ -89,7 +91,7 @@ class MeUpdateSerializer(ExtendedModelSerializer):
 
     @staticmethod
     def _update_photos(photos, data: Union[OrderedDict, dict]):
-        photos_serializer = PhotosShortSerializer(
+        photos_serializer = PhotoSerializer(
             instance=photos, data=data, partial=True
         )
         photos_serializer.is_valid(raise_exception=True)
@@ -131,6 +133,7 @@ class MeInterestUpdateSerializer(ExtendedModelSerializer):
         )
         profile_serializer.is_valid(raise_exception=True)
         profile_serializer.save()
+
 
 class UserSearchListSerializer(ExtendedModelSerializer):
     class Meta:

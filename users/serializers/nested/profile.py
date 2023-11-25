@@ -10,7 +10,6 @@ class ProfileShortSerializer(ExtendedModelSerializer):
         model = Profile
         fields = (
             'gender',
-            'age',
             'date_of_birth',
             'occupation',
             'description',
@@ -30,7 +29,6 @@ class ProfileUpdateSerializer(ExtendedModelSerializer):
         model = Profile
         fields = (
             'gender',
-            'age',
             'date_of_birth',
             'occupation',
             'description',

@@ -5,7 +5,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from users.models import Filters, UserPhotos, Profile, User
+from users.models import Filters, Photo, Profile, User
 
 
 class TestCaseMixin(TestCase):
@@ -30,7 +30,7 @@ class UserModelTestCase(TestCaseMixin):
         self.User.objects.all().delete()
         Profile.objects.all().delete()
         Filters.objects.all().delete()
-        UserPhotos.objects.all().delete()
+        Photo.objects.all().delete()
 
     def test_create_user_and_related_objects(self):
         username = self.generate_random_string()
@@ -42,7 +42,7 @@ class UserModelTestCase(TestCaseMixin):
         self.assertEqual(self.User.objects.count(), 0)
         self.assertEqual(Profile.objects.count(), 0)
         self.assertEqual(Filters.objects.count(), 0)
-        self.assertEqual(UserPhotos.objects.count(), 0)
+        self.assertEqual(Photo.objects.count(), 0)
 
         user = self.User.objects.create_user(
             username=username,
@@ -55,7 +55,7 @@ class UserModelTestCase(TestCaseMixin):
         self.assertEqual(self.User.objects.count(), 1)
         self.assertEqual(Profile.objects.count(), 1)
         self.assertEqual(Filters.objects.count(), 1)
-        self.assertEqual(UserPhotos.objects.count(), 1)
+        self.assertEqual(Photo.objects.count(), 1)
 
         self.assertTrue(hasattr(user, 'profile'))
         self.assertTrue(hasattr(user, 'filters'))

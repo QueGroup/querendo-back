@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import generics
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 

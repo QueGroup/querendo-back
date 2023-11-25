@@ -38,10 +38,10 @@ class FilterAdminInline(admin.StackedInline):
 
 
 class PhotoInline(ImageUploaderInline):
-    model = photos.UserPhotos
+    model = photos.Photo
 
 
-@admin.register(photos.UserPhotos)
+@admin.register(photos.Photo)
 class UserPhotosAdmin(admin.ModelAdmin):
     pass
 
